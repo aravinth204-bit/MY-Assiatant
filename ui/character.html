@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aravi Assistant Mascot</title>
+  <link rel="stylesheet" href="character.css">
+</head>
+<body>
+  <div id="app-container" class="character-container">
+    
+    <!-- Speech Bubble -->
+    <div id="speech-bubble" class="speech-bubble hidden" onclick="openControlCenter(event)">
+      <div class="bubble-content" id="speech-text">Hello! I am ARAVI.</div>
+      <div class="bubble-arrow"></div>
+    </div>
+
+    <!-- Character Sprite Frame Container -->
+    <div id="mascot" class="mascot-wrapper" draggable="false" ondragstart="return false;">
+      <img id="sprite-img" src="assets/sprites/Idle.png?v=2" alt="Aravi Mascot" class="mascot-img idle-pose" draggable="false" ondragstart="return false;" />
+      <div id="web-line" class="web-line hidden"></div>
+    </div>
+
+  </div>
+
+  <script src="character.js"></script>
+</body>
+</html>

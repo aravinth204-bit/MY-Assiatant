@@ -1,0 +1,158 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: transparent !important;
+  background-color: transparent !important;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  border: none !important;
+  outline: none !important;
+}
+
+.character-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+  padding-bottom: 5px;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Speech Bubble */
+.speech-bubble {
+  position: absolute;
+  top: 10px;
+  border: none !important;
+  border-radius: 16px;
+  padding: 10px 16px;
+  max-width: 220px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 10;
+  opacity: 1;
+  transform: translateY(0);
+  cursor: pointer;
+}
+
+.speech-bubble.hidden {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+}
+
+.bubble-arrow {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid rgba(15, 23, 42, 0.9);
+}
+
+/* Mascot Wrapper & Animation */
+.mascot-wrapper {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.mascot-wrapper:active {
+  cursor: grabbing;
+}
+
+.mascot-wrapper:hover {
+  transform: scale(1.05);
+}
+
+.mascot-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Pose Animations */
+@keyframes breathing {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-4px) scale(1.02); }
+}
+
+@keyframes walkBounce {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(3deg); }
+}
+
+@keyframes celebrateJump {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  30% { transform: translateY(-15px) scale(1.1); }
+  60% { transform: translateY(2px) scale(0.95); }
+}
+
+.idle-pose {
+  animation: breathing 3.5s ease-in-out infinite;
+}
+
+.walk-pose {
+  animation: walkBounce 0.5s ease-in-out infinite;
+}
+
+.celebrate-pose {
+  animation: celebrateJump 0.8s ease-in-out 2;
+}
+
+/* Web Line Accent for Web-Shoot Pose */
+.web-line {
+  position: absolute;
+  top: 40%;
+  right: -30px;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #14b8a6, #f43f5e, rgba(255,255,255,0.8));
+  box-shadow: 0 0 8px #14b8a6;
+  border-radius: 2px;
+  opacity: 0.9;
+  transform-origin: left center;
+  animation: webFlash 0.4s ease-out forwards;
+}
+
+.web-line.hidden {
+  display: none;
+}
+
+@keyframes webFlash {
+  0% { width: 0px; opacity: 0; }
+  50% { width: 50px; opacity: 1; }
+  100% { width: 60px; opacity: 0; }
+}

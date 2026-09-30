@@ -1,0 +1,8 @@
+psutil
+pywebview
+send2trash
+pystray
+pygetwindow
+pyautogui
+pywin32
+Pillow
