@@ -18,6 +18,25 @@ from src.config import ConfigManager
 from src.api_bridge import ApiBridge
 
 try:
+    import webview.platforms.winforms as _wf
+    _old_form_init = _wf.BrowserView.BrowserForm.__init__
+    def _patched_form_init(self, window, cache_dir):
+        _old_form_init(self, window, cache_dir)
+        if getattr(window, 'transparent', False):
+            # On Windows WinForms, WebView2 hosted in a Form requires the Form itself
+            # to enable transparency and match TransparencyKey to avoid showing the default Form background box.
+            try:
+                self.AllowTransparency = True
+                transparent_key = _wf.Color.FromArgb(255, 1, 2, 3) # Unique color key for transparency
+                self.BackColor = transparent_key
+                self.TransparencyKey = transparent_key
+            except Exception:
+                pass
+    _wf.BrowserView.BrowserForm.__init__ = _patched_form_init
+except Exception:
+    pass
+
+try:
     import pystray
     HAS_PYSTRAY = True
 except ImportError:
@@ -158,8 +177,8 @@ def main():
         tray_icon = pystray.Icon("ARAVI-ASSISTANT", create_tray_icon_image(), "ARAVI-ASSISTANT", tray_menu)
         threading.Thread(target=tray_icon.run, daemon=True).start()
 
-    # 5. Launch PyWebView Engine
-    webview.start(debug=False)
+    # 5. Launch PyWebView Engine with EdgeChromium (WebView2) for proper desktop transparency
+    webview.start(gui='edgechromium', debug=False)
 
 if __name__ == "__main__":
     main()

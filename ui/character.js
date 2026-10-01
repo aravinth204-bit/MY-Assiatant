@@ -29,10 +29,18 @@ function setupMascotDragAndClick() {
   const mascotEl = document.getElementById('mascot');
   if (!mascotEl) return;
 
+  let lastClickTime = 0;
+  let totalMoveDistance = 0;
+  let downScreenX = 0;
+  let downScreenY = 0;
+
   const onPointerDown = (e) => {
     if (e.button !== 0) return;
     isPointerDown = true;
     isDraggingMascot = false;
+    totalMoveDistance = 0;
+    downScreenX = e.screenX;
+    downScreenY = e.screenY;
     startScreenX = e.screenX;
     startScreenY = e.screenY;
 
@@ -41,8 +49,6 @@ function setupMascotDragAndClick() {
         mascotEl.setPointerCapture(e.pointerId);
       }
     } catch (err) {}
-
-    mascotEl.style.cursor = 'grabbing';
   };
 
   const onPointerMove = (e) => {
@@ -50,9 +56,13 @@ function setupMascotDragAndClick() {
     
     const dx = e.screenX - startScreenX;
     const dy = e.screenY - startScreenY;
+    const totalDistFromStart = Math.hypot(e.screenX - downScreenX, e.screenY - downScreenY);
+    totalMoveDistance = Math.max(totalMoveDistance, totalDistFromStart);
 
-    if (Math.abs(dx) >= 2 || Math.abs(dy) >= 2) {
+    // Threshold of 5px to engage dragging
+    if (totalMoveDistance >= 5) {
       isDraggingMascot = true;
+      mascotEl.style.cursor = 'grabbing';
       startScreenX = e.screenX;
       startScreenY = e.screenY;
 
@@ -80,10 +90,29 @@ function setupMascotDragAndClick() {
       }
     } catch (err) {}
 
-    if (!isDraggingMascot) {
-      openControlCenter(e);
+    const now = Date.now();
+    // If movement was below 5px threshold, treat as a stationary click
+    if (!isDraggingMascot && totalMoveDistance < 5) {
+      const timeSinceLastClick = now - lastClickTime;
+      if (timeSinceLastClick > 0 && timeSinceLastClick < 400) {
+        // DOUBLE CLICK: open Control Center
+        openControlCenter(e);
+        lastClickTime = 0;
+      } else {
+        // Single click: record time, trigger small notice animation
+        lastClickTime = now;
+        mascotEl.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          mascotEl.style.transform = '';
+        }, 150);
+      }
+    } else {
+      // Was a drag, reset double click tracker
+      lastClickTime = 0;
     }
+
     isDraggingMascot = false;
+    totalMoveDistance = 0;
   };
 
   mascotEl.addEventListener('pointerdown', onPointerDown);
@@ -171,13 +200,28 @@ function openControlCenter(event) {
   }
 }
 
+const notificationCooldowns = {};
+function canNotify(key, cooldownMs = 300000) { // default 5 minutes (300,000 ms)
+  const now = Date.now();
+  const last = notificationCooldowns[key] || 0;
+  if (now - last >= cooldownMs) {
+    notificationCooldowns[key] = now;
+    return true;
+  }
+  return false;
+}
+
 function checkSystemStatus() {
   if (window.pywebview && window.pywebview.api) {
     window.pywebview.api.get_system_stats().then(stats => {
       if (stats.is_tired && currentPose !== 'tired') {
-        setPose('tired', 'Phew! System high load or low battery...');
+        if (canNotify('tired_warning', 300000)) {
+          setPose('tired', 'Phew! System high load or low battery...');
+        }
       } else if (stats.is_storage_alert && currentPose !== 'alert') {
-        setPose('alert', 'Warning: Free storage space is under 10%!');
+        if (canNotify('storage_warning', 300000)) {
+          setPose('alert', 'Warning: Free storage space is under 10%!');
+        }
       }
     }).catch(err => console.log('Error checking stats:', err));
   }

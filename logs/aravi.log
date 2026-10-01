@@ -1,0 +1,6 @@
+[2026-09-30 22:11:20] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-09-30 22:11:20] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-09-30 22:13:35] [INFO] [aravi.reminders:start_pomodoro:62]: Pomodoro started: 25 minutes
+[2026-09-30 22:13:43] [INFO] [aravi.reminders:stop_pomodoro:71]: Pomodoro stopped
+[2026-09-30 22:33:01] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-09-30 22:33:01] [INFO] [aravi.reminders:start:46]: ReminderManager started
