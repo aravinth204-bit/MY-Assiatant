@@ -16,6 +16,8 @@ from src.tab_closer import TabCloser
 from src.reminders import ReminderManager
 from src.config import ConfigManager
 from src.api_bridge import ApiBridge
+from src.mascot_roamer import MascotRoamer
+from src.click_hook import MascotClickHook
 
 try:
     import webview.platforms.winforms as _wf
@@ -66,17 +68,32 @@ def main():
     system_monitor = SystemMonitor()
     smart_cleaner = SmartCleaner(protected_folders=config_manager.get("protected_folders", []))
     
-    def on_tab_trigger(domain, message):
+    def on_site_warning(domain, seconds_remaining):
         if api_bridge:
-            api_bridge.notify_ui('webshoot', message)
+            api_bridge.update_website_warning(domain, seconds_remaining)
 
-    def on_reminder_trigger(rtype, message):
-        if api_bridge:
-            pose = 'celebrate' if rtype.startswith('pomodoro') else 'idle'
-            api_bridge.notify_ui(pose, message)
+    last_folder_title = None
 
-    tab_closer = TabCloser(config_manager, on_trigger_callback=on_tab_trigger)
-    reminder_manager = ReminderManager(config_manager, on_notify_callback=on_reminder_trigger)
+    def on_folder_state(folder_title):
+        nonlocal last_folder_title
+        if folder_title:
+            api_bridge.pause_roaming(3.0)
+            folder_name = folder_title
+            for suffix in (' - File Explorer', ' - Windows Explorer'):
+                if folder_name.endswith(suffix):
+                    folder_name = folder_name[:-len(suffix)].strip()
+            if folder_name and folder_name != last_folder_title:
+                api_bridge.notify_ui('idle', f"I'm watching what you're doing in {folder_name}.")
+            last_folder_title = folder_name
+        else:
+            last_folder_title = None
+
+    tab_closer = TabCloser(
+        config_manager,
+        on_warning_callback=on_site_warning,
+        on_folder_state_callback=on_folder_state
+    )
+    reminder_manager = ReminderManager(config_manager)
 
     def open_settings_window():
         global settings_window
@@ -86,10 +103,10 @@ def main():
                 "ARAVI-ASSISTANT Control Center",
                 url=settings_html,
                 js_api=api_bridge,
-                width=900,
-                height=650,
+                width=680,
+                height=460,
                 resizable=True,
-                min_size=(800, 550)
+                min_size=(560, 400)
             )
         else:
             try:
@@ -100,8 +117,8 @@ def main():
                     "ARAVI-ASSISTANT Control Center",
                     url=settings_html,
                     js_api=api_bridge,
-                    width=900,
-                    height=650,
+                    width=680,
+                    height=460,
                     resizable=True
                 )
 
@@ -114,9 +131,12 @@ def main():
         settings_window_func=open_settings_window
     )
 
+    mascot_roamer = MascotRoamer(api_bridge)
+    api_bridge.set_roamer(mascot_roamer)
+
     # 2. Start Background Services
     tab_closer.start()
-    reminder_manager.start()
+    mascot_roamer.start()
 
     # 3. Create Main Mascot Window
     character_html = os.path.join(os.path.dirname(__file__), "ui", "character.html")
@@ -130,8 +150,8 @@ def main():
     except Exception:
         pass
 
-    win_w = 260
-    win_h = 240
+    win_w = 120
+    win_h = 120
     pos_x = 40
     pos_y = screen_height - win_h - 60
 
@@ -150,6 +170,10 @@ def main():
         resizable=False
     )
     api_bridge.set_character_window(character_window, pos_x, pos_y)
+
+    # Start Win32 click hook to detect clicks on mascot (transparent window bypass)
+    click_hook = MascotClickHook(api_bridge, on_click_callback=open_settings_window)
+    click_hook.start()
 
     # 4. System Tray Icon Setup
     if HAS_PYSTRAY:

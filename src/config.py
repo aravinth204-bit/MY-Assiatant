@@ -10,11 +10,8 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "start_with_windows": False,
     "protected_folders": [],
     "tracked_websites": [
-        {"domain": "youtube.com/shorts", "limit_minutes": 30, "used_seconds": 0},
-        {"domain": "instagram.com", "limit_minutes": 20, "used_seconds": 0},
-        {"domain": "facebook.com", "limit_minutes": 15, "used_seconds": 0},
-        {"domain": "twitter.com", "limit_minutes": 15, "used_seconds": 0},
-        {"domain": "x.com", "limit_minutes": 15, "used_seconds": 0}
+        {"domain": "youtube.com", "limit_minutes": 30, "used_seconds": 0},
+        {"domain": "instagram.com", "limit_minutes": 20, "used_seconds": 0}
     ],
     "reminders": [
         {"id": 1, "text": "Drink Water", "interval_minutes": 60, "enabled": True},

@@ -1,7 +1,8 @@
 let currentPose = 'idle';
 let animationTimer = null;
 let bubbleHideTimer = null;
-let walkFrame = 1;
+let orientationMode = 'normal';
+let orientationDirection = 'right';
 
 let isPointerDown = false;
 let isDraggingMascot = false;
@@ -9,15 +10,9 @@ let startScreenX = 0;
 let startScreenY = 0;
 let isMovingWindow = false;
 
-const SPRITES = {
-  idle: ['assets/sprites/Idle.png?v=2', 'assets/sprites/Idle Blink.png?v=2'],
-  walk: ['assets/sprites/Walk Step 1.png?v=2', 'assets/sprites/Walk Step 2.png?v=2'],
-  sit: ['assets/sprites/Sit.png?v=2'],
-  webshoot: ['assets/sprites/Web-Shoot.png?v=2'],
-  tired: ['assets/sprites/Tired.png?v=2'],
-  alert: ['assets/sprites/Tired.png?v=2'],
-  celebrate: ['assets/sprites/Celebrate.png?v=2']
-};
+const FRAME_ASSETS = Array.from({ length: 40 }, (_, index) =>
+  `assets/character-frames/ezgif-frame-${String(index + 1).padStart(3, '0')}.png`
+);
 
 document.addEventListener('DOMContentLoaded', () => {
   setPose('idle');
@@ -25,105 +20,156 @@ document.addEventListener('DOMContentLoaded', () => {
   setupMascotDragAndClick();
 });
 
-function setupMascotDragAndClick() {
+function setOrientation(mode, direction) {
   const mascotEl = document.getElementById('mascot');
   if (!mascotEl) return;
 
-  let lastClickTime = 0;
-  let totalMoveDistance = 0;
-  let downScreenX = 0;
-  let downScreenY = 0;
+  orientationMode = mode;
+  orientationDirection = direction;
+  mascotEl.style.transform = '';
+  const imgElement = document.getElementById('sprite-img');
+  if (imgElement) {
+    imgElement.style.transform = mode === 'upside_down' ? 'scaleX(-1)' : '';
+  }
+}
+
+function triggerWebLine(direction) {
+  const webLine = document.getElementById('web-line');
+  if (!webLine) return;
+  webLine.className = `web-line web-line-${direction}`;
+}
+
+function clearWebLine() {
+  const webLine = document.getElementById('web-line');
+  if (webLine) {
+    webLine.className = 'web-line hidden';
+  }
+}
+
+function showTimeLimitWarning(domain, secondsRemaining) {
+  const app = document.getElementById('app-container');
+  const bubble = document.getElementById('speech-bubble');
+  if (!app || !bubble) return;
+
+  if (animationTimer) {
+    clearInterval(animationTimer);
+    animationTimer = null;
+  }
+  if (bubbleHideTimer) {
+    clearTimeout(bubbleHideTimer);
+    bubbleHideTimer = null;
+  }
+
+  app.classList.add('time-warning-mode');
+  bubble.classList.remove('hidden');
+  document.getElementById('warning-site').textContent = domain.toLowerCase().includes('instagram') ? 'Instagram' : 'YouTube';
+  document.getElementById('warning-countdown').textContent = secondsRemaining;
+  document.getElementById('warning-seconds').textContent = secondsRemaining;
+}
+
+function hideTimeLimitWarning() {
+  const app = document.getElementById('app-container');
+  const bubble = document.getElementById('speech-bubble');
+  if (app) app.classList.remove('time-warning-mode');
+  if (bubble) bubble.classList.add('hidden');
+  setPose('idle');
+}
+
+function setupMascotDragAndClick() {
+  const mascotEl = document.getElementById('mascot');
+  const speechEl = document.getElementById('speech-bubble');
+
+  let isMouseDown = false;
+  let hasDragged = false;
+  let startX = 0;
+  let startY = 0;
+  let lastMoveX = 0;
+  let lastMoveY = 0;
+
+  const pauseRoaming = () => {
+    if (window.pywebview && window.pywebview.api && window.pywebview.api.pause_roaming) {
+      window.pywebview.api.pause_roaming(20.0);
+    }
+  };
+
+  if (speechEl) {
+    speechEl.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openControlCenter(e);
+    });
+  }
 
   const onPointerDown = (e) => {
-    if (e.button !== 0) return;
-    isPointerDown = true;
-    isDraggingMascot = false;
-    totalMoveDistance = 0;
-    downScreenX = e.screenX;
-    downScreenY = e.screenY;
-    startScreenX = e.screenX;
-    startScreenY = e.screenY;
+    if (e.button !== undefined && e.button !== 0) return;
 
-    try {
-      if (mascotEl.setPointerCapture) {
-        mascotEl.setPointerCapture(e.pointerId);
-      }
-    } catch (err) {}
+    pauseRoaming();
+    isMouseDown = true;
+    hasDragged = false;
+    startX = e.screenX;
+    startY = e.screenY;
+    lastMoveX = e.screenX;
+    lastMoveY = e.screenY;
+
+    if (mascotEl) mascotEl.style.cursor = 'grabbing';
   };
 
   const onPointerMove = (e) => {
-    if (!isPointerDown) return;
-    
-    const dx = e.screenX - startScreenX;
-    const dy = e.screenY - startScreenY;
-    const totalDistFromStart = Math.hypot(e.screenX - downScreenX, e.screenY - downScreenY);
-    totalMoveDistance = Math.max(totalMoveDistance, totalDistFromStart);
+    if (!isMouseDown) return;
 
-    // Threshold of 5px to engage dragging
-    if (totalMoveDistance >= 5) {
-      isDraggingMascot = true;
-      mascotEl.style.cursor = 'grabbing';
-      startScreenX = e.screenX;
-      startScreenY = e.screenY;
+    const dx = e.screenX - lastMoveX;
+    const dy = e.screenY - lastMoveY;
+    const totalDist = Math.hypot(e.screenX - startX, e.screenY - startY);
 
-      if (!isMovingWindow) {
-        isMovingWindow = true;
+    if (totalDist > 4) {
+      hasDragged = true;
+      lastMoveX = e.screenX;
+      lastMoveY = e.screenY;
+
+      if (!isMovingWindow && (dx !== 0 || dy !== 0)) {
         if (window.pywebview && window.pywebview.api && window.pywebview.api.move_window_by) {
+          isMovingWindow = true;
           window.pywebview.api.move_window_by(dx, dy).finally(() => {
             isMovingWindow = false;
           });
-        } else {
-          isMovingWindow = false;
         }
       }
     }
   };
 
   const onPointerUp = (e) => {
-    if (!isPointerDown) return;
-    isPointerDown = false;
-    mascotEl.style.cursor = 'grab';
+    if (!isMouseDown) return;
+    isMouseDown = false;
+    if (mascotEl) mascotEl.style.cursor = 'grab';
 
-    try {
-      if (mascotEl.releasePointerCapture) {
-        mascotEl.releasePointerCapture(e.pointerId);
-      }
-    } catch (err) {}
-
-    const now = Date.now();
-    // If movement was below 5px threshold, treat as a stationary click
-    if (!isDraggingMascot && totalMoveDistance < 5) {
-      const timeSinceLastClick = now - lastClickTime;
-      if (timeSinceLastClick > 0 && timeSinceLastClick < 400) {
-        // DOUBLE CLICK: open Control Center
-        openControlCenter(e);
-        lastClickTime = 0;
-      } else {
-        // Single click: record time, trigger small notice animation
-        lastClickTime = now;
-        mascotEl.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-          mascotEl.style.transform = '';
-        }, 150);
-      }
-    } else {
-      // Was a drag, reset double click tracker
-      lastClickTime = 0;
+    if (!hasDragged) {
+      openControlCenter(e);
     }
-
-    isDraggingMascot = false;
-    totalMoveDistance = 0;
+    hasDragged = false;
   };
 
-  mascotEl.addEventListener('pointerdown', onPointerDown);
-  mascotEl.addEventListener('pointermove', onPointerMove);
-  mascotEl.addEventListener('pointerup', onPointerUp);
-  mascotEl.addEventListener('pointercancel', onPointerUp);
+  if (mascotEl) {
+    mascotEl.addEventListener('mousedown', onPointerDown);
+    mascotEl.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      openControlCenter(e);
+    });
 
-  // Fallback for mouse events if pointer events are not triggered
-  mascotEl.addEventListener('mousedown', onPointerDown);
-  window.addEventListener('mousemove', onPointerMove);
-  window.addEventListener('mouseup', onPointerUp);
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('mouseup', onPointerUp);
+
+    mascotEl.addEventListener('touchstart', (e) => {
+      if (e.touches && e.touches[0]) {
+        onPointerDown({ button: 0, screenX: e.touches[0].screenX, screenY: e.touches[0].screenY });
+      }
+    });
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches && e.touches[0]) {
+        onPointerMove({ screenX: e.touches[0].screenX, screenY: e.touches[0].screenY });
+      }
+    });
+    window.addEventListener('touchend', onPointerUp);
+  }
 }
 
 function setPose(pose, message = null) {
@@ -138,38 +184,40 @@ function setPose(pose, message = null) {
 
   imgElement.className = 'mascot-img';
 
-  if (pose === 'idle') {
-    imgElement.classList.add('idle-pose');
-    let isBlinking = false;
+  const playFrames = (frameNumbers, intervalMs = 120) => {
+    let frameIndex = 0;
+    imgElement.src = FRAME_ASSETS[frameNumbers[frameIndex] - 1];
     animationTimer = setInterval(() => {
-      isBlinking = !isBlinking && Math.random() > 0.6;
-      imgElement.src = isBlinking ? SPRITES.idle[1] : SPRITES.idle[0];
-    }, 1500);
+      frameIndex = (frameIndex + 1) % frameNumbers.length;
+      imgElement.src = FRAME_ASSETS[frameNumbers[frameIndex] - 1];
+    }, intervalMs);
+  };
+
+  if (pose === 'idle') {
+    imgElement.src = FRAME_ASSETS[39];
   } 
   else if (pose === 'walk') {
-    imgElement.classList.add('walk-pose');
-    animationTimer = setInterval(() => {
-      walkFrame = (walkFrame === 1) ? 2 : 1;
-      imgElement.src = SPRITES.walk[walkFrame - 1];
-    }, 300);
+    const frameNumbers = orientationMode === 'upside_down'
+      ? Array.from({ length: 9 }, (_, index) => 8 + index)
+      : orientationDirection === 'left'
+        ? [39, 40]
+        : Array.from({ length: 9 }, (_, index) => 8 + index);
+    playFrames(frameNumbers);
   } 
   else if (pose === 'webshoot') {
-    imgElement.src = SPRITES.webshoot[0];
-    webLine.classList.remove('hidden');
-    setTimeout(() => {
-      webLine.classList.add('hidden');
-      setPose('idle');
-    }, 2000);
+    const frameNumbers = orientationDirection === 'right'
+      ? Array.from({ length: 8 }, (_, index) => 17 + index)
+      : [39, 40];
+    playFrames(frameNumbers);
   } 
   else if (pose === 'celebrate') {
-    imgElement.classList.add('celebrate-pose');
-    imgElement.src = SPRITES.celebrate[0];
+    playFrames([1, 2, 3, 4, 5, 6, 7, 8], 140);
     setTimeout(() => {
       setPose('idle');
     }, 2500);
   } 
   else {
-    imgElement.src = (SPRITES[pose] && SPRITES[pose][0]) ? SPRITES[pose][0] : SPRITES.idle[0];
+    imgElement.src = FRAME_ASSETS[39];
   }
 
   if (message) {
@@ -181,6 +229,7 @@ function showSpeechBubble(text, durationMs = 5000) {
   const bubble = document.getElementById('speech-bubble');
   const textEl = document.getElementById('speech-text');
   
+  if (!text) return;
   textEl.innerText = text;
   bubble.classList.remove('hidden');
 
@@ -201,7 +250,7 @@ function openControlCenter(event) {
 }
 
 const notificationCooldowns = {};
-function canNotify(key, cooldownMs = 300000) { // default 5 minutes (300,000 ms)
+function canNotify(key, cooldownMs = 300000) {
   const now = Date.now();
   const last = notificationCooldowns[key] || 0;
   if (now - last >= cooldownMs) {
@@ -228,6 +277,10 @@ function checkSystemStatus() {
 }
 
 window.setPose = setPose;
+window.setOrientation = setOrientation;
+window.triggerWebLine = triggerWebLine;
+window.clearWebLine = clearWebLine;
+window.showTimeLimitWarning = showTimeLimitWarning;
+window.hideTimeLimitWarning = hideTimeLimitWarning;
 window.showSpeechBubble = showSpeechBubble;
 window.openControlCenter = openControlCenter;
-

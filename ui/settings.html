@@ -8,190 +8,40 @@
 </head>
 <body>
   <div class="app-window">
-    
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar">
-      <div class="brand">
-        <img src="assets/sprites/Idle.png" alt="ARAVI Logo" class="brand-icon">
-        <h2>ARAVI</h2>
-      </div>
-      <nav class="nav-menu">
-        <button class="nav-btn active" onclick="switchTab('monitor')">
-          <span class="icon">📊</span> System Monitor
-        </button>
-        <button class="nav-btn" onclick="switchTab('cleaner')">
-          <span class="icon">🧹</span> Smart Cleaner
-        </button>
-        <button class="nav-btn" onclick="switchTab('distraction')">
-          <span class="icon">🌐</span> Website Limits
-        </button>
-        <button class="nav-btn" onclick="switchTab('pomodoro')">
-          <span class="icon">⏱️</span> Focus Timer
-        </button>
-        <button class="nav-btn" onclick="switchTab('general')">
-          <span class="icon">⚙️</span> Preferences
-        </button>
-      </nav>
-      <div class="sidebar-footer">
-        <span>ARAVI v1.0 • Portable</span>
-      </div>
-    </aside>
+    <main class="main-content limits-content">
+      <header class="panel-header">
+        <h1>Website time limits</h1>
+        <p>YouTube and Instagram</p>
+      </header>
 
-    <!-- Main Content Panel -->
-    <main class="main-content">
-      
-      <!-- TAB 1: SYSTEM MONITOR -->
-      <section id="tab-monitor" class="tab-panel active">
-        <header class="panel-header">
-          <h1>System Activity Monitor</h1>
-          <p>Real-time resource utilization & active processes</p>
-        </header>
-
-        <div class="stats-grid">
-          <div class="stat-card">
-            <h3>CPU Load</h3>
-            <div class="stat-value" id="cpu-val">0%</div>
-            <div class="progress-bar"><div class="progress-fill" id="cpu-fill" style="width: 0%"></div></div>
-          </div>
-          <div class="stat-card">
-            <h3>RAM Usage</h3>
-            <div class="stat-value" id="ram-val">0%</div>
-            <div class="sub-text" id="ram-sub">0 / 0 GB</div>
-            <div class="progress-bar"><div class="progress-fill" id="ram-fill" style="width: 0%"></div></div>
-          </div>
-          <div class="stat-card">
-            <h3>Disk Free</h3>
-            <div class="stat-value" id="disk-val">0%</div>
-            <div class="sub-text" id="disk-sub">0 GB free</div>
-            <div class="progress-bar"><div class="progress-fill" id="disk-fill" style="width: 0%"></div></div>
-          </div>
-          <div class="stat-card">
-            <h3>Battery</h3>
-            <div class="stat-value" id="battery-val">100%</div>
-            <div class="sub-text" id="battery-sub">Plugged in</div>
-          </div>
-        </div>
-
-        <div class="section-card">
-          <h2>Top Resource-Intensive Processes</h2>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>PID</th>
-                <th>Process Name</th>
-                <th>CPU %</th>
-                <th>RAM (MB)</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="process-table-body">
-              <tr><td colspan="5" class="loading-text">Loading process data...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- TAB 2: SMART CLEANER -->
-      <section id="tab-cleaner" class="tab-panel">
-        <header class="panel-header">
-          <h1>Storage Watcher & Smart Cleaner</h1>
-          <p>Scan and move unwanted files safely to Windows Recycle Bin</p>
-        </header>
-
-        <div class="cleaner-actions">
-          <button class="primary-btn" onclick="runCleanerScan()">🔍 Run Storage Scan</button>
-          <button class="danger-btn" onclick="cleanSelectedFiles()" id="clean-btn" disabled>🗑️ Send Selected to Recycle Bin</button>
-        </div>
-
-        <div class="section-card">
-          <div class="summary-header">
-            <h2>Scan Results</h2>
-            <span class="badge" id="scan-summary-badge">0 Files Found (0 MB)</span>
-          </div>
-          <div class="scan-results-list" id="scan-results-list">
-            <p class="empty-state">Click "Run Storage Scan" to scan Temp files, Installers, and Duplicates.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 3: WEBSITE LIMITS -->
-      <section id="tab-distraction" class="tab-panel">
-        <header class="panel-header">
-          <h1>Distraction Tab Closer</h1>
-          <p>Set daily time limits on websites to maintain focus</p>
-        </header>
-
-        <div class="form-row card">
-          <h3>Add Website Limit</h3>
-          <div class="input-group">
-            <input type="text" id="site-domain" placeholder="e.g. youtube.com/shorts or instagram.com">
-            <input type="number" id="site-limit" placeholder="Limit (mins)" min="1" max="300" style="width: 120px;">
-            <button class="primary-btn" onclick="addTrackedSite()">Add Site</button>
-          </div>
-        </div>
-
-        <div class="section-card">
-          <h2>Tracked Websites</h2>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Website Domain</th>
-                <th>Daily Limit (Mins)</th>
-                <th>Used Today (Mins)</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="sites-table-body">
-              <!-- Dynamically populated -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- TAB 4: FOCUS TIMER -->
-      <section id="tab-pomodoro" class="tab-panel">
-        <header class="panel-header">
-          <h1>Focus & Pomodoro Timer</h1>
-          <p>Boost productivity with timed focus sprints</p>
-        </header>
-
-        <div class="pomodoro-box section-card">
-          <div class="timer-display" id="pomodoro-timer">25:00</div>
-          <div class="timer-status" id="pomodoro-status">Ready for a focus session</div>
-          <div class="button-group">
-            <button class="primary-btn lg" onclick="startPomodoro()">▶️ Start 25 Min Sprint</button>
-            <button class="secondary-btn lg" onclick="stopPomodoro()">⏹️ Stop</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 5: PREFERENCES -->
-      <section id="tab-general" class="tab-panel">
-        <header class="panel-header">
-          <h1>General Preferences</h1>
-          <p>Customize assistant settings & protected directories</p>
-        </header>
-
-        <div class="section-card">
-          <div class="setting-item">
-            <label for="cfg-char-name">Character Mascot Name:</label>
-            <input type="text" id="cfg-char-name" value="Aravi" class="std-input">
-          </div>
-          <div class="setting-item">
-            <label for="cfg-storage-threshold">Storage Alert Threshold (%):</label>
-            <input type="number" id="cfg-storage-threshold" value="90" min="50" max="98" class="std-input">
-          </div>
-          <div class="setting-item">
-            <label class="checkbox-label">
-              <input type="checkbox" id="cfg-startup"> Start ARAVI automatically with Windows
+      <form id="limits-form">
+        <section class="section-card limit-list" aria-label="Website time limits">
+          <div class="limit-row">
+            <label for="youtube-limit">
+              <strong>YouTube</strong>
+              <span>youtube.com</span>
             </label>
+            <div class="limit-control">
+              <input id="youtube-limit" name="youtube" type="number" min="1" max="300" value="30" required>
+              <span>minutes</span>
+            </div>
           </div>
-          <div class="setting-actions">
-            <button class="primary-btn" onclick="saveGeneralSettings()">💾 Save Preferences</button>
+          <div class="limit-row">
+            <label for="instagram-limit">
+              <strong>Instagram</strong>
+              <span>instagram.com</span>
+            </label>
+            <div class="limit-control">
+              <input id="instagram-limit" name="instagram" type="number" min="1" max="300" value="20" required>
+              <span>minutes</span>
+            </div>
           </div>
+        </section>
+        <div class="save-row">
+          <p id="save-status" role="status" aria-live="polite"></p>
+          <button class="primary-btn" type="submit">Save limits</button>
         </div>
-      </section>
-
+      </form>
     </main>
   </div>
 

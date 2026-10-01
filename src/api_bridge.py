@@ -1,10 +1,16 @@
+import json
 import time
 import webview
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 from src.logger import get_logger
 
 logger = get_logger("api_bridge")
+
+try:
+    import win32api
+except ImportError:
+    win32api = None
 
 class ApiBridge:
     def __init__(self, system_monitor, smart_cleaner, tab_closer, reminder_manager, config_manager, settings_window_func=None):
@@ -16,11 +22,17 @@ class ApiBridge:
         self._settings_window_func = settings_window_func
         self._character_window = None
         self._notification_cooldowns: Dict[str, float] = {}
+        self._roamer = None
+        self._warning_active = False
+        self._warning_origin = None
+
+    def set_roamer(self, roamer):
+        self._roamer = roamer
 
     def set_character_window(self, window, x: int = 40, y: int = 0):
         self._character_window = window
-        self._win_x = x
-        self._win_y = y
+        self._win_x = int(x)
+        self._win_y = int(y)
 
     def get_system_stats(self) -> Dict[str, Any]:
         try:
@@ -119,29 +131,93 @@ class ApiBridge:
     def move_window_by(self, dx: int, dy: int):
         if self._is_window_alive():
             try:
-                curr_x = getattr(self._character_window, 'x', None)
-                curr_y = getattr(self._character_window, 'y', None)
-                if curr_x is None or curr_x == 0:
-                    curr_x = getattr(self, '_win_x', 40)
-                if curr_y is None or curr_y == 0:
-                    curr_y = getattr(self, '_win_y', 0)
-                
-                new_x = int(curr_x + dx)
-                new_y = int(curr_y + dy)
-                self._win_x = new_x
-                self._win_y = new_y
-                self._character_window.move(new_x, new_y)
+                self._win_x = int(self._win_x + dx)
+                self._win_y = int(self._win_y + dy)
+                self._character_window.move(self._win_x, self._win_y)
+                return True
             except BaseException as e:
                 logger.debug(f"Error moving character window by ({dx},{dy}): {e}")
+                return False
+        return False
 
     def move_window_to(self, x: int, y: int):
         if self._is_window_alive():
             try:
-                self._character_window.move(int(x), int(y))
+                self._win_x = int(x)
+                self._win_y = int(y)
+                self._character_window.move(self._win_x, self._win_y)
+                return True
             except BaseException as e:
                 logger.debug(f"Error moving character window to ({x},{y}): {e}")
+                return False
+        return False
 
-    def notify_ui(self, pose: str, speech_text: str, cooldown_key: str = None, cooldown_seconds: float = 300.0) -> bool:
+    def pause_roaming(self, seconds: float = 15.0):
+        if self._roamer:
+            self._roamer.pause(seconds)
+
+    def update_website_warning(self, domain: str, seconds_remaining: Optional[int]):
+        if not self._is_window_alive():
+            return
+
+        if seconds_remaining is None:
+            if not self._warning_active:
+                return
+            try:
+                self._character_window.evaluate_js("if(window.hideTimeLimitWarning) window.hideTimeLimitWarning();")
+                self._character_window.resize(120, 120)
+                if self._warning_origin:
+                    self._character_window.move(*self._warning_origin)
+            except BaseException as e:
+                logger.debug(f"Error restoring mascot after website warning: {e}")
+            finally:
+                self._warning_active = False
+                self._warning_origin = None
+            return
+
+        self.pause_roaming(seconds_remaining + 2)
+        if not self._warning_active:
+            self._warning_origin = (self._win_x, self._win_y)
+            screen_width = win32api.GetSystemMetrics(0) if win32api else 1920
+            warning_width = 520
+            try:
+                self._character_window.resize(warning_width, 180)
+                self._character_window.move(max(0, (screen_width - warning_width) // 2), 36)
+                self._warning_active = True
+            except BaseException as e:
+                logger.error(f"Error showing website time-limit warning: {e}", exc_info=True)
+                return
+
+        try:
+            domain_json = json.dumps(domain)
+            self._character_window.evaluate_js(
+                f"if(window.showTimeLimitWarning) window.showTimeLimitWarning({domain_json}, {seconds_remaining});"
+            )
+        except BaseException as e:
+            logger.debug(f"Error updating website time-limit countdown: {e}")
+
+    def set_orientation(self, mode: str, direction: str):
+        if self._is_window_alive():
+            try:
+                self._character_window.evaluate_js(f"if(window.setOrientation) window.setOrientation('{mode}', '{direction}');")
+            except BaseException:
+                pass
+
+    def trigger_web_line(self, direction: str):
+        if self._is_window_alive():
+            try:
+                self._character_window.evaluate_js(f"if(window.triggerWebLine) window.triggerWebLine('{direction}');")
+            except BaseException:
+                pass
+
+    def clear_web_line(self):
+        if self._is_window_alive():
+            try:
+                self._character_window.evaluate_js("if(window.clearWebLine) window.clearWebLine();")
+            except BaseException:
+                pass
+
+    def notify_ui(self, pose: str, speech_text: str = None, cooldown_key: str = None, cooldown_seconds: float = 300.0) -> bool:
         """Send notification speech bubble to mascot UI with optional cooldown."""
         now = time.time()
         if cooldown_key:
@@ -152,8 +228,11 @@ class ApiBridge:
 
         if self._is_window_alive():
             try:
-                clean_text = speech_text.replace("'", "\\'").replace('"', '\\"')
-                self._character_window.evaluate_js(f"window.setPose('{pose}', '{clean_text}');")
+                if speech_text:
+                    clean_text = speech_text.replace("'", "\\'").replace('"', '\\"')
+                    self._character_window.evaluate_js(f"window.setPose('{pose}', '{clean_text}');")
+                else:
+                    self._character_window.evaluate_js(f"window.setPose('{pose}');")
                 return True
             except BaseException as e:
                 logger.debug(f"Failed to evaluate JS notify_ui: {e}")

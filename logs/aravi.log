@@ -4,3 +4,98 @@
 [2026-09-30 22:13:43] [INFO] [aravi.reminders:stop_pomodoro:71]: Pomodoro stopped
 [2026-09-30 22:33:01] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
 [2026-09-30 22:33:01] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 11:43:49] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 11:43:49] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 11:48:09] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 11:48:09] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 11:49:11] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 11:49:11] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 11:49:56] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 11:49:56] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 11:50:38] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 11:50:38] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 11:52:37] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 11:52:37] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 11:53:36] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 11:53:36] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 11:54:50] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 11:54:50] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 11:57:39] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 11:57:39] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 11:58:13] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 11:58:13] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 11:59:34] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 11:59:34] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 12:00:28] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 12:00:28] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 12:34:11] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 12:34:11] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 12:34:11] [INFO] [aravi.mascot_roamer:start:45]: MascotRoamer thread started
+[2026-10-01 12:42:22] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 12:42:22] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 12:42:22] [INFO] [aravi.mascot_roamer:start:45]: MascotRoamer thread started
+[2026-10-01 12:43:39] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 12:43:39] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 12:43:39] [INFO] [aravi.mascot_roamer:start:45]: MascotRoamer thread started
+[2026-10-01 12:46:01] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 12:46:01] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 12:46:01] [INFO] [aravi.mascot_roamer:start:45]: MascotRoamer thread started
+[2026-10-01 12:49:53] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 12:49:53] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 12:49:53] [INFO] [aravi.mascot_roamer:start:45]: MascotRoamer thread started
+[2026-10-01 12:49:53] [INFO] [aravi.click_hook:start:58]: MascotClickHook started
+[2026-10-01 12:50:19] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 12:50:19] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 12:50:19] [INFO] [aravi.mascot_roamer:start:45]: MascotRoamer thread started
+[2026-10-01 12:50:19] [INFO] [aravi.click_hook:start:58]: MascotClickHook started
+[2026-10-01 12:50:21] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (165,900)
+[2026-10-01 12:51:01] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (153,925)
+[2026-10-01 12:52:41] [INFO] [aravi.reminders:start_pomodoro:62]: Pomodoro started: 25 minutes
+[2026-10-01 13:05:46] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 13:05:46] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 13:05:46] [INFO] [aravi.mascot_roamer:start:45]: MascotRoamer thread started
+[2026-10-01 13:05:46] [INFO] [aravi.click_hook:start:58]: MascotClickHook started
+[2026-10-01 16:18:19] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 16:18:19] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 16:18:19] [INFO] [aravi.mascot_roamer:start:45]: MascotRoamer thread started
+[2026-10-01 16:18:19] [INFO] [aravi.click_hook:start:58]: MascotClickHook started
+[2026-10-01 16:19:55] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (1807,844)
+[2026-10-01 16:55:38] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 16:55:38] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 16:55:38] [INFO] [aravi.mascot_roamer:start:44]: MascotRoamer thread started
+[2026-10-01 16:55:38] [INFO] [aravi.click_hook:start:58]: MascotClickHook started
+[2026-10-01 16:56:40] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (511,68)
+[2026-10-01 16:57:13] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (1201,152)
+[2026-10-01 17:03:38] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 17:03:38] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 17:03:38] [INFO] [aravi.mascot_roamer:start:44]: MascotRoamer thread started
+[2026-10-01 17:03:38] [INFO] [aravi.click_hook:start:58]: MascotClickHook started
+[2026-10-01 17:07:46] [INFO] [aravi.tab_closer:start:39]: TabCloser service started
+[2026-10-01 17:07:46] [INFO] [aravi.reminders:start:46]: ReminderManager started
+[2026-10-01 17:07:46] [INFO] [aravi.mascot_roamer:start:44]: MascotRoamer thread started
+[2026-10-01 17:07:46] [INFO] [aravi.click_hook:start:58]: MascotClickHook started
+[2026-10-01 17:08:58] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (841,966)
+[2026-10-01 17:08:59] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (841,966)
+[2026-10-01 17:09:00] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (977,979)
+[2026-10-01 17:09:00] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (1215,958)
+[2026-10-01 17:09:24] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (1263,938)
+[2026-10-01 17:10:39] [INFO] [aravi.reminders:start_pomodoro:62]: Pomodoro started: 25 minutes
+[2026-10-01 17:10:53] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (1250,962)
+[2026-10-01 17:50:18] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (87,60)
+[2026-10-01 17:52:29] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (792,164)
+[2026-10-01 17:52:29] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (722,247)
+[2026-10-01 17:52:55] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (1805,246)
+[2026-10-01 17:52:57] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (1774,249)
+[2026-10-01 18:05:39] [INFO] [aravi.tab_closer:_loop:91]: Time limit reached for youtube.com (limit: 1m, used: 60s)
+[2026-10-01 18:09:57] [INFO] [aravi.tab_closer:start:56]: TabCloser service started
+[2026-10-01 18:09:57] [INFO] [aravi.mascot_roamer:start:44]: MascotRoamer thread started
+[2026-10-01 18:09:57] [INFO] [aravi.click_hook:start:58]: MascotClickHook started
+[2026-10-01 18:10:06] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (848,972)
+[2026-10-01 18:10:07] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (1004,966)
+[2026-10-01 18:10:47] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (1806,330)
+[2026-10-01 18:14:24] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (1133,1054)
+[2026-10-01 18:14:43] [INFO] [aravi.tab_closer:_loop:91]: Time limit reached for youtube.com (limit: 1m, used: 60s)
+[2026-10-01 18:18:05] [INFO] [aravi.tab_closer:_loop:91]: Time limit reached for youtube.com (limit: 1m, used: 60s)
+[2026-10-01 18:20:18] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (1208,1055)
+[2026-10-01 18:21:36] [INFO] [aravi.tab_closer:_loop:91]: Time limit reached for youtube.com (limit: 1m, used: 60s)
+[2026-10-01 18:21:46] [DEBUG] [aravi.mascot_roamer:pause:52]: Mascot roaming paused for 3.0 seconds
