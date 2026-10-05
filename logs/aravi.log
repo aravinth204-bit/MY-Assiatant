@@ -99,3 +99,31 @@
 [2026-10-01 18:20:18] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (1208,1055)
 [2026-10-01 18:21:36] [INFO] [aravi.tab_closer:_loop:91]: Time limit reached for youtube.com (limit: 1m, used: 60s)
 [2026-10-01 18:21:46] [DEBUG] [aravi.mascot_roamer:pause:52]: Mascot roaming paused for 3.0 seconds
+[2026-10-05 10:09:07] [INFO] [aravi.tab_closer:start:56]: TabCloser service started
+[2026-10-05 10:09:07] [INFO] [aravi.mascot_roamer:start:44]: MascotRoamer thread started
+[2026-10-05 10:09:07] [INFO] [aravi.click_hook:start:58]: MascotClickHook started
+[2026-10-05 10:32:14] [INFO] [aravi.tab_closer:start:56]: TabCloser service started
+[2026-10-05 10:32:14] [INFO] [aravi.mascot_roamer:start:44]: MascotRoamer thread started
+[2026-10-05 10:32:14] [INFO] [aravi.click_hook:start:58]: MascotClickHook started
+[2026-10-05 10:33:00] [INFO] [aravi.tab_closer:start:56]: TabCloser service started
+[2026-10-05 10:33:00] [INFO] [aravi.mascot_roamer:start:44]: MascotRoamer thread started
+[2026-10-05 10:33:00] [INFO] [aravi.click_hook:start:58]: MascotClickHook started
+[2026-10-05 10:33:21] [INFO] [aravi.tab_closer:start:56]: TabCloser service started
+[2026-10-05 10:33:21] [INFO] [aravi.mascot_roamer:start:44]: MascotRoamer thread started
+[2026-10-05 10:33:21] [INFO] [aravi.click_hook:start:58]: MascotClickHook started
+[2026-10-05 17:05:23] [INFO] [aravi.tab_closer:start:58]: TabCloser service started
+[2026-10-05 17:05:23] [INFO] [aravi.reminders:start:48]: ReminderManager started
+[2026-10-05 17:05:23] [INFO] [aravi.mascot_roamer:start:46]: MascotRoamer thread started
+[2026-10-05 17:05:23] [INFO] [aravi.click_hook:start:58]: MascotClickHook started
+[2026-10-05 17:05:32] [DEBUG] [aravi.click_hook:low_level_mouse_proc:103]: Click detected on mascot at (779,956)
+[2026-10-05 17:05:39] [INFO] [aravi.tab_closer:stop:69]: TabCloser service stopped
+[2026-10-05 17:05:39] [INFO] [aravi.reminders:stop:59]: ReminderManager stopped
+[2026-10-05 17:05:39] [INFO] [aravi.click_hook:stop:66]: MascotClickHook stopped
+[2026-10-05 18:11:00] [INFO] [aravi.tab_closer:start:58]: TabCloser service started
+[2026-10-05 18:11:00] [INFO] [aravi.reminders:start:48]: ReminderManager started
+[2026-10-05 18:11:00] [INFO] [aravi.mascot_roamer:start:46]: MascotRoamer thread started
+[2026-10-05 18:11:00] [INFO] [aravi.click_hook:start:59]: MascotClickHook started
+[2026-10-05 18:11:05] [DEBUG] [aravi.click_hook:low_level_mouse_proc:104]: Click detected on mascot at (342,961)
+[2026-10-05 18:11:31] [INFO] [aravi.tab_closer:stop:69]: TabCloser service stopped
+[2026-10-05 18:11:31] [INFO] [aravi.reminders:stop:59]: ReminderManager stopped
+[2026-10-05 18:11:31] [INFO] [aravi.click_hook:stop:67]: MascotClickHook stopped

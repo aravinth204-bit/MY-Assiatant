@@ -25,6 +25,7 @@ class TabCloser:
         self.on_folder_state_callback = on_folder_state_callback
         self.running = False
         self._thread = None
+        self._stop_event = threading.Event()
 
     def get_active_window_info(self):
         if HAS_WIN32:
@@ -49,7 +50,8 @@ class TabCloser:
 
     def start(self):
         try:
-            if not self.running:
+            if not self._thread or not self._thread.is_alive():
+                self._stop_event.clear()
                 self.running = True
                 self._thread = threading.Thread(target=self._loop, daemon=True)
                 self._thread.start()
@@ -58,16 +60,22 @@ class TabCloser:
             logger.error(f"Error starting TabCloser: {e}", exc_info=True)
 
     def stop(self):
-        try:
-            self.running = False
-            logger.info("TabCloser service stopped")
-        except Exception as e:
-            logger.error(f"Error stopping TabCloser: {e}", exc_info=True)
+        self.running = False
+        self._stop_event.set()
+        if self._thread and self._thread.is_alive():
+            self._thread.join(timeout=3.0)
+            if self._thread.is_alive():
+                logger.warning("TabCloser thread did not stop within 3 seconds")
+        logger.info("TabCloser service stopped")
 
     def _loop(self):
         pyautogui.FAILSAFE = False
-        while self.running:
+        last_check_time = time.monotonic()
+        while self.running and not self._stop_event.is_set():
             try:
+                now = time.monotonic()
+                elapsed_seconds = max(0.0, now - last_check_time)
+                last_check_time = now
                 active_title, window_class = self.get_active_window_info()
                 title = active_title.lower()
                 folder_name = active_title.strip() if window_class in ("CabinetWClass", "ExploreWClass") else None
@@ -83,21 +91,23 @@ class TabCloser:
                         limit_secs = limit_mins * 60
 
                         if domain and self._site_matches_title(domain, title):
-                            # Add 2 seconds to tracked time
-                            site["used_seconds"] = used_secs + 2
+                            site["used_seconds"] = used_secs + elapsed_seconds
                             self.config_manager.save_config()
 
                             if site["used_seconds"] >= limit_secs and limit_mins > 0:
                                 logger.info(f"Time limit reached for {domain} (limit: {limit_mins}m, used: {site['used_seconds']}s)")
 
                                 cancelled = False
+                                tab_closed = False
                                 for seconds_left in range(10, 0, -1):
-                                    if not self.running or not self._site_matches_title(domain, self.get_active_window_title().lower()):
+                                    if not self.running or self._stop_event.is_set() or not self._site_matches_title(domain, self.get_active_window_title().lower()):
                                         cancelled = True
                                         break
                                     if self.on_warning_callback:
                                         self.on_warning_callback(domain, seconds_left)
-                                    time.sleep(1.0)
+                                    if self._stop_event.wait(1.0):
+                                        cancelled = True
+                                        break
 
                                 if self.on_warning_callback:
                                     self.on_warning_callback(domain, None)
@@ -105,17 +115,19 @@ class TabCloser:
                                 if not cancelled and self._site_matches_title(domain, self.get_active_window_title().lower()):
                                     try:
                                         pyautogui.hotkey('ctrl', 'w')
+                                        tab_closed = True
                                     except Exception as pe:
                                         logger.error(f"pyautogui error closing tab: {pe}", exc_info=True)
                                 elif not cancelled:
                                     logger.info(f"Active site changed before closing {domain}; tab closure cancelled.")
 
-                                # Reset used seconds so it doesn't repeatedly trigger instantly
-                                site["used_seconds"] = 0
-                                self.config_manager.save_config()
+                                if tab_closed:
+                                    site["used_seconds"] = 0
+                                    self.config_manager.save_config()
                                 break
+                            break
             except Exception as e:
                 logger.error(f"Unexpected error in TabCloser loop: {e}", exc_info=True)
 
-            time.sleep(2.0)
-
+            last_check_time = time.monotonic()
+            self._stop_event.wait(2.0)

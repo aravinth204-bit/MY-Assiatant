@@ -45,6 +45,7 @@ class MascotClickHook:
         self._hook_proc = None
         self._thread = None
         self.running = False
+        self.enabled = True
 
         # Track press position to distinguish click vs drag
         self._press_x = None
@@ -59,11 +60,10 @@ class MascotClickHook:
 
     def stop(self):
         self.running = False
-        if self._hook:
-            try:
-                user32.UnhookWindowsHookEx(self._hook)
-            except Exception:
-                pass
+        if self._thread and self._thread.is_alive():
+            self._thread.join(timeout=2.0)
+            if self._thread.is_alive():
+                logger.warning("MascotClickHook thread did not stop within 2 seconds")
         logger.info("MascotClickHook stopped")
 
     def _get_mascot_rect(self):
@@ -100,7 +100,7 @@ class MascotClickHook:
 
                             # A click: minimal movement, short duration
                             if drag_dist < 8 and elapsed < 0.5:
-                                if self._point_in_mascot(px, py):
+                                if self.enabled and self._point_in_mascot(px, py):
                                     logger.debug(f"Click detected on mascot at ({px},{py})")
                                     try:
                                         self._click_callback()

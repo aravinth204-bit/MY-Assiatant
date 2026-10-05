@@ -9,7 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function getSite(domain, sites) {
-  return sites.find(site => site.domain.toLowerCase().includes(domain));
+  return sites.find(site =>
+    typeof site.domain === 'string' &&
+    site.domain.toLowerCase().replace(/^www\./, '') === domain
+  );
 }
 
 async function loadLimits() {
@@ -34,15 +37,22 @@ async function saveLimits(event) {
 
   try {
     const config = await window.pywebview.api.get_config();
-    const existingSites = config.tracked_websites || [];
-    config.tracked_websites = SITE_DEFAULTS.map(site => {
-      const previous = getSite(site.domain, existingSites);
-      return {
-        domain: site.domain,
-        limit_minutes: Number(document.getElementById(site.inputId).value),
-        used_seconds: previous ? previous.used_seconds || 0 : 0
-      };
+    const trackedSites = Array.isArray(config.tracked_websites)
+      ? [...config.tracked_websites]
+      : [];
+    SITE_DEFAULTS.forEach(site => {
+      const existing = getSite(site.domain, trackedSites);
+      if (existing) {
+        existing.limit_minutes = Number(document.getElementById(site.inputId).value);
+      } else {
+        trackedSites.push({
+          domain: site.domain,
+          limit_minutes: Number(document.getElementById(site.inputId).value),
+          used_seconds: 0
+        });
+      }
     });
+    config.tracked_websites = trackedSites;
     const saved = await window.pywebview.api.save_config(config);
     status.textContent = saved ? 'Limits saved.' : 'Could not save limits.';
   } catch (error) {

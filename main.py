@@ -1,5 +1,4 @@
 import os
-import sys
 
 # Direct temp files to D drive if C drive space is constrained
 os.makedirs("D:\\pip_temp", exist_ok=True)
@@ -18,6 +17,9 @@ from src.config import ConfigManager
 from src.api_bridge import ApiBridge
 from src.mascot_roamer import MascotRoamer
 from src.click_hook import MascotClickHook
+from src.logger import get_logger
+
+logger = get_logger("main")
 
 try:
     import webview.platforms.winforms as _wf
@@ -62,10 +64,15 @@ def create_tray_icon_image():
 
 def main():
     global character_window, settings_window, tray_icon
+    click_hook = None
+    tray_thread = None
+    mascot_visible = True
 
     # 1. Initialize Core Managers
     config_manager = ConfigManager()
-    system_monitor = SystemMonitor()
+    system_monitor = SystemMonitor(
+        storage_threshold_pct=config_manager.get("storage_threshold_pct", 90)
+    )
     smart_cleaner = SmartCleaner(protected_folders=config_manager.get("protected_folders", []))
     
     def on_site_warning(domain, seconds_remaining):
@@ -134,10 +141,6 @@ def main():
     mascot_roamer = MascotRoamer(api_bridge)
     api_bridge.set_roamer(mascot_roamer)
 
-    # 2. Start Background Services
-    tab_closer.start()
-    mascot_roamer.start()
-
     # 3. Create Main Mascot Window
     character_html = os.path.join(os.path.dirname(__file__), "ui", "character.html")
     
@@ -171,9 +174,39 @@ def main():
     )
     api_bridge.set_character_window(character_window, pos_x, pos_y)
 
-    # Start Win32 click hook to detect clicks on mascot (transparent window bypass)
     click_hook = MascotClickHook(api_bridge, on_click_callback=open_settings_window)
-    click_hook.start()
+
+    shutdown_started = threading.Event()
+
+    def shutdown_services(wait_for_tray=False):
+        if not shutdown_started.is_set():
+            shutdown_started.set()
+            for service in (tab_closer, reminder_manager, mascot_roamer, click_hook):
+                if service:
+                    try:
+                        service.stop()
+                    except Exception as e:
+                        logger.error("Error stopping %s: %s", type(service).__name__, e, exc_info=True)
+
+        if tray_icon:
+            try:
+                tray_icon.stop()
+            except Exception as e:
+                logger.error("Error stopping system tray icon: %s", e, exc_info=True)
+        if wait_for_tray and tray_thread and tray_thread.is_alive() and threading.current_thread() is not tray_thread:
+            tray_thread.join(timeout=2.0)
+            if tray_thread.is_alive():
+                logger.warning("System tray thread did not stop within 2 seconds")
+
+    def on_character_closed():
+        shutdown_services()
+        if settings_window:
+            try:
+                settings_window.destroy()
+            except Exception as e:
+                logger.error("Error closing settings window: %s", e, exc_info=True)
+
+    character_window.events.closed += on_character_closed
 
     # 4. System Tray Icon Setup
     if HAS_PYSTRAY:
@@ -181,17 +214,31 @@ def main():
             open_settings_window()
 
         def on_tray_toggle_visibility(icon, item):
+            nonlocal mascot_visible
             if character_window:
                 try:
-                    character_window.hide() if character_window.on_top else character_window.show()
-                except Exception:
-                    pass
+                    if mascot_visible:
+                        character_window.hide()
+                        mascot_visible = False
+                        mascot_roamer.enabled = False
+                        click_hook.enabled = False
+                    else:
+                        character_window.show()
+                        mascot_visible = True
+                        mascot_roamer.enabled = True
+                        click_hook.enabled = True
+                        mascot_roamer.pause(3.0)
+                except Exception as e:
+                    logger.error("Error toggling mascot visibility: %s", e, exc_info=True)
 
         def on_tray_quit(icon, item):
-            tab_closer.stop()
-            reminder_manager.stop()
-            icon.stop()
-            sys.exit(0)
+            shutdown_services()
+            for window in (settings_window, character_window):
+                if window:
+                    try:
+                        window.destroy()
+                    except Exception as e:
+                        logger.error("Error closing application window: %s", e, exc_info=True)
 
         tray_menu = pystray.Menu(
             pystray.MenuItem("Control Center & Settings", on_tray_settings),
@@ -199,10 +246,19 @@ def main():
             pystray.MenuItem("Quit ARAVI", on_tray_quit)
         )
         tray_icon = pystray.Icon("ARAVI-ASSISTANT", create_tray_icon_image(), "ARAVI-ASSISTANT", tray_menu)
-        threading.Thread(target=tray_icon.run, daemon=True).start()
 
     # 5. Launch PyWebView Engine with EdgeChromium (WebView2) for proper desktop transparency
-    webview.start(gui='edgechromium', debug=False)
+    try:
+        tab_closer.start()
+        reminder_manager.start()
+        mascot_roamer.start()
+        click_hook.start()
+        if tray_icon:
+            tray_thread = threading.Thread(target=tray_icon.run, daemon=True)
+            tray_thread.start()
+        webview.start(gui='edgechromium', debug=False)
+    finally:
+        shutdown_services(wait_for_tray=True)
 
 if __name__ == "__main__":
     main()

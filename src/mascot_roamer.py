@@ -18,6 +18,7 @@ class MascotRoamer:
         self.paused_until = 0.0
         self.enabled = True
         self._thread = None
+        self._stop_event = threading.Event()
         
         # Screen metrics
         self.screen_width = 1920
@@ -37,7 +38,8 @@ class MascotRoamer:
                 logger.debug(f"Error getting system metrics: {e}")
 
     def start(self):
-        if not self.running:
+        if not self._thread or not self._thread.is_alive():
+            self._stop_event.clear()
             self.running = True
             self._thread = threading.Thread(target=self._roam_loop, daemon=True)
             self._thread.start()
@@ -45,6 +47,11 @@ class MascotRoamer:
 
     def stop(self):
         self.running = False
+        self._stop_event.set()
+        if self._thread and self._thread.is_alive():
+            self._thread.join(timeout=2.0)
+            if self._thread.is_alive():
+                logger.warning("MascotRoamer thread did not stop within 2 seconds")
 
     def pause(self, seconds: float = 15.0):
         """Temporarily pause roaming (e.g. when user is dragging or clicking mascot)."""
@@ -56,14 +63,15 @@ class MascotRoamer:
 
     def _roam_loop(self):
         # Initial delay before autonomous roaming begins
-        time.sleep(3.0)
+        if self._stop_event.wait(3.0):
+            return
         
         min_x = 30
         
         while self.running:
             try:
                 if self.is_paused():
-                    time.sleep(1.0)
+                    self._stop_event.wait(1.0)
                     continue
 
                 self.update_screen_metrics()
@@ -86,14 +94,14 @@ class MascotRoamer:
                     curr_x += 4
                     if curr_x > target_x: curr_x = target_x
                     self.api_bridge.move_window_to(curr_x, bottom_y)
-                    time.sleep(0.03)
+                    self._stop_event.wait(0.03)
 
                 # --- STEP 2: WEB SHOOT & CLIMB UP (RIGHT WALL) ---
                 if not self.is_paused() and self.running:
                     self.api_bridge.set_orientation("normal", "right")
                     self.api_bridge.notify_ui("webshoot", None)
                     self.api_bridge.trigger_web_line("up")
-                    time.sleep(0.5)
+                    self._stop_event.wait(0.5)
 
                     # Zip Up to top ceiling
                     curr_y = bottom_y
@@ -101,7 +109,7 @@ class MascotRoamer:
                         curr_y -= 12
                         if curr_y < top_y: curr_y = top_y
                         self.api_bridge.move_window_to(curr_x, curr_y)
-                        time.sleep(0.02)
+                        self._stop_event.wait(0.02)
 
                     self.api_bridge.clear_web_line()
 
@@ -115,24 +123,24 @@ class MascotRoamer:
                         curr_x -= 4
                         if curr_x < target_x: curr_x = target_x
                         self.api_bridge.move_window_to(curr_x, top_y)
-                        time.sleep(0.03)
+                        self._stop_event.wait(0.03)
 
                 # --- STEP 4: WEB SHOOT & ZIP DOWN (LEFT WALL) ---
                 if not self.is_paused() and self.running:
                     self.api_bridge.set_orientation("normal", "left")
                     self.api_bridge.notify_ui("webshoot", None)
                     self.api_bridge.trigger_web_line("down")
-                    time.sleep(0.5)
+                    self._stop_event.wait(0.5)
 
                     # Zip Down to ground
                     while curr_y < bottom_y and not self.is_paused() and self.running:
                         curr_y += 12
                         if curr_y > bottom_y: curr_y = bottom_y
                         self.api_bridge.move_window_to(curr_x, curr_y)
-                        time.sleep(0.02)
+                        self._stop_event.wait(0.02)
 
                     self.api_bridge.clear_web_line()
 
             except Exception as e:
                 logger.error(f"Error in MascotRoamer loop: {e}", exc_info=True)
-                time.sleep(2.0)
+                self._stop_event.wait(2.0)

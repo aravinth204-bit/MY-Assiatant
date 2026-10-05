@@ -7,7 +7,13 @@ from src.logger import get_logger
 logger = get_logger("system_monitor")
 
 class SystemMonitor:
-    def __init__(self):
+    def __init__(self, storage_threshold_pct: float = 90.0):
+        if isinstance(storage_threshold_pct, bool) or not isinstance(storage_threshold_pct, (int, float)):
+            raise ValueError("storage_threshold_pct must be a number between 0 and 100")
+        if not 0 <= storage_threshold_pct <= 100:
+            raise ValueError("storage_threshold_pct must be between 0 and 100")
+
+        self.storage_threshold_pct = storage_threshold_pct
         self.high_cpu_start_time = None
 
     def get_system_stats(self) -> Dict[str, Any]:
@@ -30,7 +36,7 @@ class SystemMonitor:
 
             cpu_high_duration = (time.time() - self.high_cpu_start_time) if self.high_cpu_start_time else 0
             is_tired = (cpu_high_duration >= 120) or (battery_pct < 15 and not is_plugged)
-            is_storage_alert = disk_info.percent > 90.0 or (disk_info.free / disk_info.total) < 0.10
+            is_storage_alert = disk_info.percent >= self.storage_threshold_pct
 
             return {
                 "cpu_percent": cpu_percent,

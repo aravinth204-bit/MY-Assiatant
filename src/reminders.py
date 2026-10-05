@@ -13,6 +13,7 @@ class ReminderManager:
         self.on_notify_callback = on_notify_callback
         self.running = False
         self._thread = None
+        self._stop_event = threading.Event()
         self.pomodoro_active = False
         self.pomodoro_end_time = 0
         self.pomodoro_mode = "work" # "work" or "break"
@@ -39,7 +40,8 @@ class ReminderManager:
 
     def start(self):
         try:
-            if not self.running:
+            if not self._thread or not self._thread.is_alive():
+                self._stop_event.clear()
                 self.running = True
                 self._thread = threading.Thread(target=self._reminder_loop, daemon=True)
                 self._thread.start()
@@ -48,11 +50,13 @@ class ReminderManager:
             logger.error(f"Error starting ReminderManager: {e}", exc_info=True)
 
     def stop(self):
-        try:
-            self.running = False
-            logger.info("ReminderManager stopped")
-        except Exception as e:
-            logger.error(f"Error stopping ReminderManager: {e}", exc_info=True)
+        self.running = False
+        self._stop_event.set()
+        if self._thread and self._thread.is_alive():
+            self._thread.join(timeout=2.0)
+            if self._thread.is_alive():
+                logger.warning("ReminderManager thread did not stop within 2 seconds")
+        logger.info("ReminderManager stopped")
 
     def start_pomodoro(self, minutes: int = 25):
         try:
@@ -98,9 +102,7 @@ class ReminderManager:
                 pass
 
     def _reminder_loop(self):
-        last_check_time = time.time()
-        
-        while self.running:
+        while self.running and not self._stop_event.is_set():
             try:
                 now = time.time()
 
@@ -132,8 +134,7 @@ class ReminderManager:
                             if self.on_notify_callback:
                                 self.on_notify_callback("reminder", f"⏰ Reminder: {r.get('text', 'Take a break!')}")
 
-                last_check_time = now
             except Exception as e:
                 logger.error(f"Unexpected error in ReminderManager loop: {e}", exc_info=True)
 
-            time.sleep(15.0)
+            self._stop_event.wait(15.0)
