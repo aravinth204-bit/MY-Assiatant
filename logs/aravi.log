@@ -127,3 +127,17 @@
 [2026-10-05 18:11:31] [INFO] [aravi.tab_closer:stop:69]: TabCloser service stopped
 [2026-10-05 18:11:31] [INFO] [aravi.reminders:stop:59]: ReminderManager stopped
 [2026-10-05 18:11:31] [INFO] [aravi.click_hook:stop:67]: MascotClickHook stopped
+[2026-10-05 19:50:58] [INFO] [aravi.tab_closer:start:58]: TabCloser service started
+[2026-10-05 19:50:58] [INFO] [aravi.reminders:start:48]: ReminderManager started
+[2026-10-05 19:50:58] [INFO] [aravi.mascot_roamer:start:46]: MascotRoamer thread started
+[2026-10-05 19:50:58] [INFO] [aravi.click_hook:start:59]: MascotClickHook started
+[2026-10-05 19:51:25] [INFO] [aravi.tab_closer:stop:69]: TabCloser service stopped
+[2026-10-05 19:51:25] [INFO] [aravi.reminders:stop:59]: ReminderManager stopped
+[2026-10-05 19:51:25] [INFO] [aravi.click_hook:stop:67]: MascotClickHook stopped
+[2026-10-05 19:56:43] [INFO] [aravi.tab_closer:start:58]: TabCloser service started
+[2026-10-05 19:56:43] [INFO] [aravi.reminders:start:48]: ReminderManager started
+[2026-10-05 19:56:43] [INFO] [aravi.mascot_roamer:start:46]: MascotRoamer thread started
+[2026-10-05 19:56:43] [INFO] [aravi.click_hook:start:79]: MascotClickHook started
+[2026-10-05 19:56:47] [DEBUG] [aravi.click_hook:low_level_mouse_proc:124]: Click detected on mascot at (232,651)
+[2026-10-05 20:08:38] [DEBUG] [aravi.tab_closer:get_active_window_info:36]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-05 20:10:45] [DEBUG] [aravi.click_hook:low_level_mouse_proc:124]: Click detected on mascot at (599,268)

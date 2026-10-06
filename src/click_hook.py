@@ -19,8 +19,28 @@ user32 = ctypes.windll.user32
 kernel32 = ctypes.windll.kernel32
 
 HOOKPROC = ctypes.WINFUNCTYPE(
-    ctypes.c_long, ctypes.c_int, ctypes.wintypes.WPARAM, ctypes.wintypes.LPARAM
+    ctypes.c_ssize_t, ctypes.c_int, ctypes.wintypes.WPARAM, ctypes.wintypes.LPARAM
 )
+
+# Explicitly configure 64-bit Win32 API signatures to prevent OverflowError on lParam
+user32.CallNextHookEx.argtypes = [
+    ctypes.wintypes.HHOOK,
+    ctypes.c_int,
+    ctypes.wintypes.WPARAM,
+    ctypes.wintypes.LPARAM,
+]
+user32.CallNextHookEx.restype = ctypes.c_ssize_t
+
+user32.SetWindowsHookExW.argtypes = [
+    ctypes.c_int,
+    HOOKPROC,
+    ctypes.wintypes.HINSTANCE,
+    ctypes.wintypes.DWORD,
+]
+user32.SetWindowsHookExW.restype = ctypes.wintypes.HHOOK
+
+user32.UnhookWindowsHookEx.argtypes = [ctypes.wintypes.HHOOK]
+user32.UnhookWindowsHookEx.restype = ctypes.wintypes.BOOL
 
 class MSLLHOOKSTRUCT(ctypes.Structure):
     _fields_ = [
