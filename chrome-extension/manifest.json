@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "ARAVI YouTube Time Limit",
+  "version": "1.0.0",
+  "description": "Tracks YouTube video playback locally and closes the tab when its time limit is reached.",
+  "permissions": [
+    "alarms",
+    "notifications",
+    "scripting",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://youtube.com/*",
+    "https://youtu.be/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://youtube.com/*",
+        "https://youtu.be/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "ARAVI YouTube Time Limit",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "48": "icons/aravi.png",
+    "128": "icons/aravi.png"
+  }
+}

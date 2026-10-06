@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ARAVI YouTube Limit</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main>
+    <h1>ARAVI YouTube Limit</h1>
+    <p class="description">Counts video playback, including when the YouTube tab is in the background.</p>
+
+    <form id="limit-form">
+      <label for="limit-minutes">Daily playback limit</label>
+      <div class="limit-row">
+        <input id="limit-minutes" name="limit-minutes" type="number" min="1" max="300" step="1" required>
+        <span>minutes</span>
+        <button type="submit">Save</button>
+      </div>
+    </form>
+
+    <section class="usage-card" aria-live="polite">
+      <p id="playback-status">Checking playback…</p>
+      <p><strong id="usage-time">0 min</strong> used today</p>
+      <p id="warning-status" class="warning hidden"></p>
+    </section>
+
+    <div class="footer-row">
+      <p id="message" role="status"></p>
+      <button id="reset-button" class="secondary" type="button">Reset today</button>
+    </div>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>

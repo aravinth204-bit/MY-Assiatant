@@ -1,0 +1,130 @@
+:root {
+  color-scheme: dark;
+  font-family: "Segoe UI", sans-serif;
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 320px;
+  margin: 0;
+}
+
+main {
+  padding: 18px;
+}
+
+h1 {
+  margin: 0 0 7px;
+  color: #5eead4;
+  font-size: 18px;
+}
+
+.description,
+.usage-card p,
+#message {
+  color: #cbd5e1;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.description {
+  margin: 0 0 18px;
+}
+
+label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.limit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+input {
+  width: 80px;
+  padding: 8px;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  background: #1e293b;
+  color: #fff;
+  font-size: 14px;
+}
+
+.limit-row span {
+  flex: 1;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+button {
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: #14b8a6;
+  color: #06211f;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #5eead4;
+}
+
+.usage-card {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #1e293b;
+}
+
+.usage-card p {
+  margin: 0 0 6px;
+}
+
+.usage-card p:last-child {
+  margin-bottom: 0;
+}
+
+.usage-card strong {
+  color: #5eead4;
+  font-size: 16px;
+}
+
+.warning {
+  color: #fda4af !important;
+}
+
+.hidden {
+  display: none;
+}
+
+.footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+#message {
+  min-height: 18px;
+  margin: 0;
+}
+
+button.secondary {
+  flex: 0 0 auto;
+  border: 1px solid #475569;
+  background: transparent;
+  color: #cbd5e1;
+  font-size: 11px;
+}

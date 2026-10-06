@@ -270,3 +270,262 @@
 [2026-10-06 13:49:34] [INFO] [aravi.mascot_roamer:start:46]: MascotRoamer thread started
 [2026-10-06 13:49:34] [INFO] [aravi.click_hook:start:79]: MascotClickHook started
 [2026-10-06 13:51:06] [DEBUG] [aravi.click_hook:low_level_mouse_proc:124]: Click detected on mascot at (1639,102)
+[2026-10-06 13:56:23] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:56:25] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:56:27] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:56:29] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:56:31] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:56:33] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:56:34] [DEBUG] [aravi.click_hook:low_level_mouse_proc:124]: Click detected on mascot at (628,129)
+[2026-10-06 13:56:35] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:56:36] [DEBUG] [aravi.click_hook:low_level_mouse_proc:124]: Click detected on mascot at (646,121)
+[2026-10-06 13:56:37] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:56:48] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:56:50] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:56:52] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:56:54] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:56:56] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:56:58] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:57:00] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:57:02] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:57:04] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:57:06] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:57:08] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:57:10] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:58:58] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:00] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:02] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:04] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:06] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:08] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:10] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:12] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:14] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:16] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:18] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:20] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:22] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:24] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:26] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:28] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:30] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:40] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:42] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:44] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:46] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:48] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:50] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:52] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:54] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:56] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 13:59:58] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:00:00] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:00:02] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:00:04] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:00:06] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:00:08] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:00:10] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:00:12] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:00:14] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:00:16] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:00:18] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:00:20] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:00:22] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:00:24] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:00:26] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 14:01:41] [DEBUG] [aravi.click_hook:low_level_mouse_proc:124]: Click detected on mascot at (1731,918)
+[2026-10-06 14:07:16] [DEBUG] [aravi.click_hook:low_level_mouse_proc:124]: Click detected on mascot at (66,271)
+[2026-10-06 14:07:36] [DEBUG] [aravi.click_hook:low_level_mouse_proc:124]: Click detected on mascot at (1740,64)
+[2026-10-06 14:10:30] [INFO] [aravi.tab_closer:_loop:102]: Time limit reached for youtube.com (limit: 1m, used: 60.22751209989656s)
+[2026-10-06 14:10:30] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 12 seconds
+[2026-10-06 14:10:31] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 11 seconds
+[2026-10-06 14:10:32] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 10 seconds
+[2026-10-06 14:10:33] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 9 seconds
+[2026-10-06 14:10:35] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 8 seconds
+[2026-10-06 14:10:36] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 7 seconds
+[2026-10-06 14:10:37] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 6 seconds
+[2026-10-06 14:10:38] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 5 seconds
+[2026-10-06 14:10:39] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 4 seconds
+[2026-10-06 14:10:40] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3 seconds
+[2026-10-06 14:11:40] [INFO] [aravi.tab_closer:stop:71]: TabCloser service stopped
+[2026-10-06 14:11:40] [INFO] [aravi.reminders:stop:59]: ReminderManager stopped
+[2026-10-06 14:11:40] [INFO] [aravi.click_hook:stop:87]: MascotClickHook stopped
+[2026-10-06 15:23:43] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 6.0 seconds
+[2026-10-06 15:23:43] [INFO] [aravi.tab_closer:start:60]: TabCloser service started
+[2026-10-06 15:23:43] [INFO] [aravi.reminders:start:48]: ReminderManager started
+[2026-10-06 15:23:43] [INFO] [aravi.mascot_roamer:start:46]: MascotRoamer thread started
+[2026-10-06 15:23:43] [INFO] [aravi.click_hook:start:79]: MascotClickHook started
+[2026-10-06 15:23:53] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 15:23:55] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 15:23:57] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 15:23:59] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 15:24:01] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 15:24:03] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 15:24:05] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3.0 seconds
+[2026-10-06 15:33:00] [DEBUG] [aravi.click_hook:low_level_mouse_proc:124]: Click detected on mascot at (1408,218)
+[2026-10-06 15:34:18] [DEBUG] [aravi.click_hook:low_level_mouse_proc:124]: Click detected on mascot at (959,36)
+[2026-10-06 15:35:24] [INFO] [aravi.tab_closer:_loop:102]: Time limit reached for youtube.com (limit: 1m, used: 60.21993860043585s)
+[2026-10-06 15:35:24] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 12 seconds
+[2026-10-06 15:35:25] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 11 seconds
+[2026-10-06 15:35:26] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 10 seconds
+[2026-10-06 15:35:27] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 9 seconds
+[2026-10-06 15:35:28] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 8 seconds
+[2026-10-06 15:35:29] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 7 seconds
+[2026-10-06 15:35:30] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 6 seconds
+[2026-10-06 15:35:31] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 5 seconds
+[2026-10-06 15:35:44] [INFO] [aravi.tab_closer:_loop:102]: Time limit reached for youtube.com (limit: 1m, used: 62.23049710050691s)
+[2026-10-06 15:35:44] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 12 seconds
+[2026-10-06 15:35:45] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 11 seconds
+[2026-10-06 15:35:46] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 10 seconds
+[2026-10-06 15:35:47] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 9 seconds
+[2026-10-06 15:35:48] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 8 seconds
+[2026-10-06 15:35:48] [DEBUG] [aravi.click_hook:low_level_mouse_proc:124]: Click detected on mascot at (1763,62)
+[2026-10-06 15:36:03] [DEBUG] [aravi.click_hook:low_level_mouse_proc:124]: Click detected on mascot at (1724,229)
+[2026-10-06 15:36:05] [INFO] [aravi.tab_closer:_loop:102]: Time limit reached for youtube.com (limit: 1m, used: 64.23461640055757s)
+[2026-10-06 15:36:05] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 12 seconds
+[2026-10-06 15:36:06] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 11 seconds
+[2026-10-06 15:36:07] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 10 seconds
+[2026-10-06 15:36:08] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 9 seconds
+[2026-10-06 15:36:09] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 8 seconds
+[2026-10-06 15:36:10] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 7 seconds
+[2026-10-06 15:36:11] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 6 seconds
+[2026-10-06 15:36:12] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 5 seconds
+[2026-10-06 15:36:13] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 4 seconds
+[2026-10-06 15:36:14] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3 seconds
+[2026-10-06 15:37:54] [INFO] [aravi.tab_closer:_loop:102]: Time limit reached for youtube.com (limit: 1m, used: 60.24458850000519s)
+[2026-10-06 15:37:54] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 12 seconds
+[2026-10-06 15:37:55] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 11 seconds
+[2026-10-06 15:37:56] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 10 seconds
+[2026-10-06 15:37:57] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 9 seconds
+[2026-10-06 15:37:58] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 8 seconds
+[2026-10-06 15:37:59] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 7 seconds
+[2026-10-06 15:38:00] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 6 seconds
+[2026-10-06 15:38:01] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 5 seconds
+[2026-10-06 15:38:02] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 4 seconds
+[2026-10-06 15:38:03] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 3 seconds
+[2026-10-06 15:45:02] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:04] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:06] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:08] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:10] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:12] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:14] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:16] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:18] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:20] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:22] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:24] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:27] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:29] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:31] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:33] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:35] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:37] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:39] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:41] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:43] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:45] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:47] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:49] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:51] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:53] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:55] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:57] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:45:59] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:01] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:03] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:05] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:07] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:09] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:11] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:13] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:15] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:17] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:19] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:21] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:23] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:25] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:27] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:29] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:31] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:33] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:35] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:37] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:39] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:41] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:43] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:45] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:47] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:49] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:51] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:53] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:55] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:57] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:46:59] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:01] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:03] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:05] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:07] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:09] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:11] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:13] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:15] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:17] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:19] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:21] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:23] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:25] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:27] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:29] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:31] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:33] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:35] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:37] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:39] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:41] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:43] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:45] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:47] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:49] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:51] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:53] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:55] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:57] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:47:59] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:01] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:03] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:05] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:07] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:09] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:11] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:13] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:15] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:17] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:19] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:21] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:23] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:25] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:27] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:29] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:31] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:33] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:35] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:37] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:39] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:41] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:43] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:45] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:47] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:49] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:51] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:54] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:56] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:48:58] [DEBUG] [aravi.tab_closer:get_active_window_info:38]: Error getting foreground window info: (1400, 'GetClassName', 'Invalid window handle.')
+[2026-10-06 15:53:35] [INFO] [aravi.tab_closer:stop:71]: TabCloser service stopped
+[2026-10-06 15:53:35] [INFO] [aravi.reminders:stop:59]: ReminderManager stopped
+[2026-10-06 15:53:35] [INFO] [aravi.click_hook:stop:87]: MascotClickHook stopped
+[2026-10-06 15:53:42] [DEBUG] [aravi.mascot_roamer:pause:59]: Mascot roaming paused for 6.0 seconds
+[2026-10-06 15:53:42] [INFO] [aravi.tab_closer:start:60]: TabCloser service started
+[2026-10-06 15:53:42] [INFO] [aravi.reminders:start:48]: ReminderManager started
+[2026-10-06 15:53:42] [INFO] [aravi.mascot_roamer:start:46]: MascotRoamer thread started
+[2026-10-06 15:53:42] [INFO] [aravi.click_hook:start:79]: MascotClickHook started
