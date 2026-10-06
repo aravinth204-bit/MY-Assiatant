@@ -1,4 +1,5 @@
 import json
+import threading
 import time
 import webview
 from typing import Dict, Any, List, Optional
@@ -25,14 +26,19 @@ class ApiBridge:
         self._roamer = None
         self._warning_active = False
         self._warning_origin = None
+        self._observation_lock = threading.Lock()
+        self._window_observation_active = False
+        self._last_observed_window = None
 
     def set_roamer(self, roamer):
         self._roamer = roamer
 
-    def set_character_window(self, window, x: int = 40, y: int = 0):
+    def set_character_window(self, window, x: int = 40, y: int = 0, width: int = 120, height: int = 120):
         self._character_window = window
         self._win_x = int(x)
         self._win_y = int(y)
+        self._character_width = int(width)
+        self._character_height = int(height)
 
     def get_system_stats(self) -> Dict[str, Any]:
         try:
@@ -93,6 +99,31 @@ class ApiBridge:
         except Exception as e:
             logger.error(f"Error in ApiBridge.get_config: {e}", exc_info=True)
             return {}
+
+    def get_window_observation_status(self) -> bool:
+        with self._observation_lock:
+            return self._window_observation_active
+
+    def start_window_observation(self) -> bool:
+        with self._observation_lock:
+            self._window_observation_active = True
+            self._last_observed_window = None
+        self.notify_ui('idle', 'App activity observation is on. Window titles stay on this device.')
+        return True
+
+    def stop_window_observation(self) -> bool:
+        with self._observation_lock:
+            self._window_observation_active = False
+            self._last_observed_window = None
+        self.notify_ui('idle', 'App activity observation is off.')
+        return False
+
+    def observe_active_window(self, window_title: str):
+        with self._observation_lock:
+            if not self._window_observation_active or window_title == self._last_observed_window:
+                return
+            self._last_observed_window = window_title
+        self.notify_ui('idle', f'Active window: {window_title}')
 
     def save_config(self, config_dict: Dict[str, Any]) -> bool:
         try:
@@ -165,7 +196,7 @@ class ApiBridge:
                 return
             try:
                 self._character_window.evaluate_js("if(window.hideTimeLimitWarning) window.hideTimeLimitWarning();")
-                self._character_window.resize(120, 120)
+                self._character_window.resize(self._character_width, self._character_height)
                 if self._warning_origin:
                     self._character_window.move(*self._warning_origin)
             except BaseException as e:
@@ -229,8 +260,8 @@ class ApiBridge:
         if self._is_window_alive():
             try:
                 if speech_text:
-                    clean_text = speech_text.replace("'", "\\'").replace('"', '\\"')
-                    self._character_window.evaluate_js(f"window.setPose('{pose}', '{clean_text}');")
+                    speech_json = json.dumps(speech_text)
+                    self._character_window.evaluate_js(f"window.setPose('{pose}', {speech_json});")
                 else:
                     self._character_window.evaluate_js(f"window.setPose('{pose}');")
                 return True
@@ -238,4 +269,3 @@ class ApiBridge:
                 logger.debug(f"Failed to evaluate JS notify_ui: {e}")
                 return False
         return False
-

@@ -19,9 +19,18 @@ function createSettingsHarness(config) {
     },
     'youtube-limit': { value: '15' },
     'instagram-limit': { value: '25' },
-    'save-status': { textContent: '' }
+    'save-status': { textContent: '' },
+    'observation-status': { textContent: '' },
+    'observation-toggle': {
+      textContent: '',
+      disabled: false,
+      addEventListener: (event, handler) => {
+        listeners.observationToggle = handler;
+      }
+    }
   };
   let savedConfig;
+  let observationActive = false;
 
   const context = {
     document: {
@@ -34,6 +43,15 @@ function createSettingsHarness(config) {
       pywebview: {
         api: {
           get_config: async () => JSON.parse(JSON.stringify(config)),
+          get_window_observation_status: async () => observationActive,
+          start_window_observation: async () => {
+            observationActive = true;
+            return observationActive;
+          },
+          stop_window_observation: async () => {
+            observationActive = false;
+            return observationActive;
+          },
           save_config: async nextConfig => {
             savedConfig = nextConfig;
             return true;
@@ -98,4 +116,20 @@ test('saving limits recognizes www aliases without adding duplicate entries', as
   assert.equal(savedSites.length, 2);
   assert.equal(savedSites[0].limit_minutes, 15);
   assert.equal(savedSites[1].limit_minutes, 25);
+});
+
+test('activity observation can be started and stopped explicitly', async () => {
+  const harness = createSettingsHarness({ tracked_websites: [] });
+  await new Promise(resolve => setImmediate(resolve));
+
+  assert.equal(harness.elements['observation-status'].textContent, 'Observation is off.');
+  assert.equal(harness.elements['observation-toggle'].textContent, 'Start observing');
+
+  await harness.listeners.observationToggle();
+  assert.equal(harness.elements['observation-status'].textContent, 'Observation is on. Active window titles are shown by ARAVI.');
+  assert.equal(harness.elements['observation-toggle'].textContent, 'Stop observing');
+
+  await harness.listeners.observationToggle();
+  assert.equal(harness.elements['observation-status'].textContent, 'Observation is off.');
+  assert.equal(harness.elements['observation-toggle'].textContent, 'Start observing');
 });

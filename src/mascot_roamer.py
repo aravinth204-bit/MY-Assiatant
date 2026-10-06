@@ -26,8 +26,8 @@ class MascotRoamer:
         self.update_screen_metrics()
         
         # Mascot window dimensions
-        self.win_w = 120
-        self.win_h = 120
+        self.win_w = 280
+        self.win_h = 200
 
     def update_screen_metrics(self):
         if HAS_WIN32:
@@ -61,13 +61,72 @@ class MascotRoamer:
     def is_paused(self) -> bool:
         return time.time() < self.paused_until or not self.enabled
 
+    def _move_vertically(self, x: int, current_y: int, target_y: int) -> int:
+        direction = -1 if target_y < current_y else 1
+        while current_y != target_y and not self.is_paused() and self.running:
+            current_y += direction * min(12, abs(target_y - current_y))
+            self.api_bridge.move_window_to(x, current_y)
+            if self._stop_event.wait(0.02):
+                break
+        return current_y
+
+    def _move_horizontally(self, y: int, current_x: int, target_x: int) -> int:
+        direction = -1 if target_x < current_x else 1
+        while current_x != target_x and not self.is_paused() and self.running:
+            current_x += direction * min(4, abs(target_x - current_x))
+            self.api_bridge.move_window_to(current_x, y)
+            if self._stop_event.wait(0.03):
+                break
+        return current_x
+
+    def _roam_cycle(self):
+        min_x = 0
+        max_x = max(min_x, self.screen_width - self.win_w)
+        bottom_y = max(0, self.screen_height - self.win_h)
+        top_y = 0
+
+        curr_x = min(max(min_x, self.api_bridge._win_x), max_x)
+        curr_y = min(max(top_y, self.api_bridge._win_y), bottom_y)
+
+        curr_y = self._move_vertically(curr_x, curr_y, bottom_y)
+        if curr_y != bottom_y or self.is_paused() or not self.running:
+            return
+
+        self.api_bridge.set_orientation("normal", "right")
+        self.api_bridge.notify_ui("walk_right", None)
+        curr_x = self._move_horizontally(bottom_y, curr_x, max_x)
+        if curr_x != max_x or self.is_paused() or not self.running:
+            return
+
+        self.api_bridge.set_orientation("normal", "right")
+        self.api_bridge.notify_ui("climb_up", None)
+        curr_y = self._move_vertically(curr_x, bottom_y, top_y)
+        if curr_y != top_y or self.is_paused() or not self.running:
+            return
+
+        self.api_bridge.set_orientation("upside_down", "left")
+        self.api_bridge.notify_ui("ceiling_walk", None)
+        curr_x = self._move_horizontally(top_y, max_x, min_x)
+        if curr_x != min_x or self.is_paused() or not self.running:
+            return
+
+        self.api_bridge.set_orientation("normal", "left")
+        self.api_bridge.notify_ui("climb_down", None)
+        self.api_bridge.trigger_web_line("down")
+        if self._stop_event.wait(0.5):
+            self.api_bridge.clear_web_line()
+            return
+        curr_y = self._move_vertically(curr_x, top_y, bottom_y)
+        self.api_bridge.clear_web_line()
+        if curr_y == bottom_y and self.running and not self.is_paused():
+            self.api_bridge.notify_ui("landing", None)
+            self._stop_event.wait(0.85)
+
     def _roam_loop(self):
         # Initial delay before autonomous roaming begins
         if self._stop_event.wait(3.0):
             return
-        
-        min_x = 30
-        
+
         while self.running:
             try:
                 if self.is_paused():
@@ -75,71 +134,7 @@ class MascotRoamer:
                     continue
 
                 self.update_screen_metrics()
-                max_x = max(min_x + 100, self.screen_width - self.win_w - 30)
-                bottom_y = max(100, self.screen_height - self.win_h - 50)
-                top_y = 30
-
-                curr_x = self.api_bridge._win_x
-                curr_y = self.api_bridge._win_y
-                if curr_x <= 0: curr_x = min_x
-                if curr_y <= 0: curr_y = bottom_y
-
-                # --- STEP 1: WALK GROUND RIGHT (Left to Right) ---
-                if self.is_paused(): continue
-                self.api_bridge.set_orientation("normal", "right")
-                self.api_bridge.notify_ui("walk", None)
-                target_x = max_x
-
-                while curr_x < target_x and not self.is_paused() and self.running:
-                    curr_x += 4
-                    if curr_x > target_x: curr_x = target_x
-                    self.api_bridge.move_window_to(curr_x, bottom_y)
-                    self._stop_event.wait(0.03)
-
-                # --- STEP 2: WEB SHOOT & CLIMB UP (RIGHT WALL) ---
-                if not self.is_paused() and self.running:
-                    self.api_bridge.set_orientation("normal", "right")
-                    self.api_bridge.notify_ui("webshoot", None)
-                    self.api_bridge.trigger_web_line("up")
-                    self._stop_event.wait(0.5)
-
-                    # Zip Up to top ceiling
-                    curr_y = bottom_y
-                    while curr_y > top_y and not self.is_paused() and self.running:
-                        curr_y -= 12
-                        if curr_y < top_y: curr_y = top_y
-                        self.api_bridge.move_window_to(curr_x, curr_y)
-                        self._stop_event.wait(0.02)
-
-                    self.api_bridge.clear_web_line()
-
-                # --- STEP 3: WALK CEILING LEFT (Right to Left at Top) ---
-                if not self.is_paused() and self.running:
-                    self.api_bridge.set_orientation("upside_down", "left")
-                    self.api_bridge.notify_ui("walk", None)
-                    target_x = min_x
-
-                    while curr_x > target_x and not self.is_paused() and self.running:
-                        curr_x -= 4
-                        if curr_x < target_x: curr_x = target_x
-                        self.api_bridge.move_window_to(curr_x, top_y)
-                        self._stop_event.wait(0.03)
-
-                # --- STEP 4: WEB SHOOT & ZIP DOWN (LEFT WALL) ---
-                if not self.is_paused() and self.running:
-                    self.api_bridge.set_orientation("normal", "left")
-                    self.api_bridge.notify_ui("webshoot", None)
-                    self.api_bridge.trigger_web_line("down")
-                    self._stop_event.wait(0.5)
-
-                    # Zip Down to ground
-                    while curr_y < bottom_y and not self.is_paused() and self.running:
-                        curr_y += 12
-                        if curr_y > bottom_y: curr_y = bottom_y
-                        self.api_bridge.move_window_to(curr_x, curr_y)
-                        self._stop_event.wait(0.02)
-
-                    self.api_bridge.clear_web_line()
+                self._roam_cycle()
 
             except Exception as e:
                 logger.error(f"Error in MascotRoamer loop: {e}", exc_info=True)

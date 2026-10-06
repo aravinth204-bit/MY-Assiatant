@@ -413,6 +413,30 @@ body {
   font-size: 13px;
 }
 
+.observation-card > p {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.observation-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+#observation-status {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.secondary-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 @media (max-width: 520px) {
   .main-content {
     padding: 22px 18px;
@@ -428,5 +452,10 @@ body {
 
   .limit-row label {
     flex-wrap: wrap;
+  }
+
+  .observation-controls {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

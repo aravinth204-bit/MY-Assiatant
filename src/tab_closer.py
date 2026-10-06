@@ -19,10 +19,12 @@ class TabCloser:
         config_manager,
         on_warning_callback: Optional[Callable[[str, Optional[int]], None]] = None,
         on_folder_state_callback: Optional[Callable[[Optional[str]], None]] = None,
+        on_active_window_callback: Optional[Callable[[str], None]] = None,
     ):
         self.config_manager = config_manager
         self.on_warning_callback = on_warning_callback
         self.on_folder_state_callback = on_folder_state_callback
+        self.on_active_window_callback = on_active_window_callback
         self.running = False
         self._thread = None
         self._stop_event = threading.Event()
@@ -77,6 +79,8 @@ class TabCloser:
                 elapsed_seconds = max(0.0, now - last_check_time)
                 last_check_time = now
                 active_title, window_class = self.get_active_window_info()
+                if self.on_active_window_callback:
+                    self.on_active_window_callback(active_title)
                 title = active_title.lower()
                 folder_name = active_title.strip() if window_class in ("CabinetWClass", "ExploreWClass") else None
                 if self.on_folder_state_callback:

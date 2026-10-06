@@ -28,7 +28,7 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   position: relative;
   padding-bottom: 0;
   background: transparent !important;
@@ -40,25 +40,30 @@ html, body {
 /* Speech Bubble */
 .speech-bubble {
   position: absolute;
-  top: 10px;
-  border: none !important;
-  border-radius: 16px;
-  padding: 10px 16px;
-  max-width: 220px;
-  font-size: 13px;
+  top: 12px;
+  left: 50%;
+  width: max-content;
+  max-width: 260px;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  border-radius: 14px;
+  padding: 11px 15px;
+  background: rgba(15, 23, 42, 0.96);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 14px;
   font-weight: 500;
   line-height: 1.4;
   text-align: center;
   transition: opacity 0.3s ease, transform 0.3s ease;
   z-index: 10;
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-50%, 0);
   cursor: pointer;
 }
 
 .speech-bubble.hidden {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translate(-50%, 10px);
   pointer-events: none;
 }
 
@@ -71,7 +76,7 @@ html, body {
   height: 0;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
-  border-top: 8px solid rgba(15, 23, 42, 0.9);
+  border-top: 8px solid rgba(15, 23, 42, 0.96);
 }
 
 /* Mascot Wrapper & Animation */

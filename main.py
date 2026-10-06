@@ -50,6 +50,7 @@ except ImportError:
 character_window = None
 settings_window = None
 tray_icon = None
+WEBVIEW_STORAGE_PATH = os.path.join(os.environ["TEMP"], "ARAVI-WebView2")
 
 def create_tray_icon_image():
     """Generate a high-res teal/coral tray icon image."""
@@ -95,10 +96,15 @@ def main():
         else:
             last_folder_title = None
 
+    def on_active_window_state(window_title):
+        if window_title:
+            api_bridge.observe_active_window(window_title.strip())
+
     tab_closer = TabCloser(
         config_manager,
         on_warning_callback=on_site_warning,
-        on_folder_state_callback=on_folder_state
+        on_folder_state_callback=on_folder_state,
+        on_active_window_callback=on_active_window_state
     )
     reminder_manager = ReminderManager(config_manager)
 
@@ -153,10 +159,10 @@ def main():
     except Exception:
         pass
 
-    win_w = 120
-    win_h = 120
+    win_w = 280
+    win_h = 200
     pos_x = 40
-    pos_y = screen_height - win_h - 60
+    pos_y = screen_height - win_h
 
     character_window = webview.create_window(
         "ARAVI Mascot",
@@ -172,7 +178,10 @@ def main():
         easy_drag=False,
         resizable=False
     )
-    api_bridge.set_character_window(character_window, pos_x, pos_y)
+    api_bridge.set_character_window(character_window, pos_x, pos_y, win_w, win_h)
+    mascot_roamer.win_w = win_w
+    mascot_roamer.win_h = win_h
+    mascot_roamer.pause(6.0)
 
     click_hook = MascotClickHook(api_bridge, on_click_callback=open_settings_window)
 
@@ -256,7 +265,13 @@ def main():
         if tray_icon:
             tray_thread = threading.Thread(target=tray_icon.run, daemon=True)
             tray_thread.start()
-        webview.start(gui='edgechromium', debug=False)
+        os.makedirs(WEBVIEW_STORAGE_PATH, exist_ok=True)
+        webview.start(
+            gui='edgechromium',
+            debug=False,
+            private_mode=False,
+            storage_path=WEBVIEW_STORAGE_PATH
+        )
     finally:
         shutdown_services(wait_for_tray=True)
 

@@ -5,8 +5,51 @@ const SITE_DEFAULTS = [
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('limits-form').addEventListener('submit', saveLimits);
+  document.getElementById('observation-toggle').addEventListener('click', toggleObservation);
   loadLimits();
+  loadObservationStatus();
 });
+
+async function loadObservationStatus() {
+  if (!window.pywebview || !window.pywebview.api) return;
+
+  try {
+    setObservationStatus(await window.pywebview.api.get_window_observation_status());
+  } catch (error) {
+    document.getElementById('observation-status').textContent = 'Could not load observation status.';
+  }
+}
+
+async function toggleObservation() {
+  const button = document.getElementById('observation-toggle');
+  const status = document.getElementById('observation-status');
+  if (!window.pywebview || !window.pywebview.api) {
+    status.textContent = 'ARAVI is not available.';
+    return;
+  }
+
+  button.disabled = true;
+  try {
+    const isActive = await window.pywebview.api.get_window_observation_status();
+    const nextStatus = isActive
+      ? await window.pywebview.api.stop_window_observation()
+      : await window.pywebview.api.start_window_observation();
+    setObservationStatus(nextStatus);
+  } catch (error) {
+    status.textContent = 'Could not change observation status.';
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function setObservationStatus(isActive) {
+  document.getElementById('observation-status').textContent = isActive
+    ? 'Observation is on. Active window titles are shown by ARAVI.'
+    : 'Observation is off.';
+  document.getElementById('observation-toggle').textContent = isActive
+    ? 'Stop observing'
+    : 'Start observing';
+}
 
 function getSite(domain, sites) {
   return sites.find(site =>

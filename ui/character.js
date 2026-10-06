@@ -15,8 +15,8 @@ const FRAME_ASSETS = Array.from({ length: 40 }, (_, index) =>
 );
 
 document.addEventListener('DOMContentLoaded', () => {
-  setPose('idle');
-  setInterval(checkSystemStatus, 5000);
+  setPose('startup');
+  setTimeout(() => setInterval(checkSystemStatus, 5000), 7000);
   setupMascotDragAndClick();
 });
 
@@ -29,7 +29,9 @@ function setOrientation(mode, direction) {
   mascotEl.style.transform = '';
   const imgElement = document.getElementById('sprite-img');
   if (imgElement) {
-    imgElement.style.transform = mode === 'upside_down' ? 'scaleX(-1)' : '';
+    const flipX = direction === 'left' ? -1 : 1;
+    const flipY = mode === 'upside_down' ? -1 : 1;
+    imgElement.style.transform = `scale(${flipX}, ${flipY})`;
   }
 }
 
@@ -70,6 +72,10 @@ function showTimeLimitWarning(domain, secondsRemaining) {
 function hideTimeLimitWarning() {
   const app = document.getElementById('app-container');
   const bubble = document.getElementById('speech-bubble');
+  if (bubbleHideTimer) {
+    clearTimeout(bubbleHideTimer);
+    bubbleHideTimer = null;
+  }
   if (app) app.classList.remove('time-warning-mode');
   if (bubble) bubble.classList.add('hidden');
   setPose('idle');
@@ -184,30 +190,56 @@ function setPose(pose, message = null) {
 
   imgElement.className = 'mascot-img';
 
-  const playFrames = (frameNumbers, intervalMs = 120) => {
+  const playFrames = (frameNumbers, intervalMs = 120, loop = true, onComplete = null) => {
     let frameIndex = 0;
     imgElement.src = FRAME_ASSETS[frameNumbers[frameIndex] - 1];
     animationTimer = setInterval(() => {
+      if (!loop && frameIndex === frameNumbers.length - 1) {
+        clearInterval(animationTimer);
+        animationTimer = null;
+        if (onComplete) onComplete();
+        return;
+      }
       frameIndex = (frameIndex + 1) % frameNumbers.length;
       imgElement.src = FRAME_ASSETS[frameNumbers[frameIndex] - 1];
     }, intervalMs);
   };
 
-  if (pose === 'idle') {
+  if (pose === 'startup') {
+    imgElement.style.transform = '';
+    playFrames([1, 2, 3, 4], 140, false, () => {
+      showSpeechBubble('Hi, I am ARAVI, your personal assistant.');
+    });
+  }
+  else if (pose === 'walk_right') {
+    imgElement.style.transform = '';
+    playFrames(Array.from({ length: 9 }, (_, index) => index + 5));
+  }
+  else if (pose === 'climb_up') {
+    imgElement.style.transform = '';
+    playFrames(Array.from({ length: 8 }, (_, index) => index + 15));
+  }
+  else if (pose === 'ceiling_walk') {
+    imgElement.style.transform = '';
+    playFrames(Array.from({ length: 7 }, (_, index) => index + 25));
+  }
+  else if (pose === 'climb_down') {
+    imgElement.style.transform = '';
+    playFrames([33, 34, 35]);
+  }
+  else if (pose === 'landing') {
+    imgElement.style.transform = '';
+    playFrames([36, 37, 38, 39, 40], 160, false);
+  }
+  else if (pose === 'idle') {
     imgElement.src = FRAME_ASSETS[39];
   } 
   else if (pose === 'walk') {
-    const frameNumbers = orientationMode === 'upside_down'
-      ? Array.from({ length: 9 }, (_, index) => 8 + index)
-      : orientationDirection === 'left'
-        ? [39, 40]
-        : Array.from({ length: 9 }, (_, index) => 8 + index);
+    const frameNumbers = Array.from({ length: 9 }, (_, index) => 8 + index);
     playFrames(frameNumbers);
   } 
   else if (pose === 'webshoot') {
-    const frameNumbers = orientationDirection === 'right'
-      ? Array.from({ length: 8 }, (_, index) => 17 + index)
-      : [39, 40];
+    const frameNumbers = Array.from({ length: 8 }, (_, index) => 17 + index);
     playFrames(frameNumbers);
   } 
   else if (pose === 'celebrate') {
@@ -226,10 +258,11 @@ function setPose(pose, message = null) {
 }
 
 function showSpeechBubble(text, durationMs = 5000) {
+  const app = document.getElementById('app-container');
   const bubble = document.getElementById('speech-bubble');
   const textEl = document.getElementById('speech-text');
   
-  if (!text) return;
+  if (!text || (app && app.classList.contains('time-warning-mode'))) return;
   textEl.innerText = text;
   bubble.classList.remove('hidden');
 
@@ -238,7 +271,10 @@ function showSpeechBubble(text, durationMs = 5000) {
   }
 
   bubbleHideTimer = setTimeout(() => {
-    bubble.classList.add('hidden');
+    if (!app || !app.classList.contains('time-warning-mode')) {
+      bubble.classList.add('hidden');
+    }
+    bubbleHideTimer = null;
   }, durationMs);
 }
 
