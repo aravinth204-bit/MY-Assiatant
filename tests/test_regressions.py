@@ -2,6 +2,8 @@ import importlib
 import json
 import logging
 import sys
+import threading
+import time
 import types
 import unittest
 from unittest.mock import patch
@@ -246,6 +248,95 @@ class TabCloserTests(unittest.TestCase):
 
 
 class ScreenObservationTests(unittest.TestCase):
+    def test_chat_website_limit_update_saves_allowed_site(self):
+        config = types.SimpleNamespace(
+            config={
+                "tracked_websites": [
+                    {"domain": "www.youtube.com", "limit_minutes": 30, "used_seconds": 60},
+                    {"domain": "instagram.com", "limit_minutes": 20, "used_seconds": 15},
+                ]
+            },
+            save_config=lambda: True,
+        )
+        bridge = api_bridge_module.ApiBridge(None, None, None, None, config)
+
+        result = bridge.set_website_limit("youtube.com", 1)
+
+        self.assertEqual(result, {"domain": "youtube.com", "limit_minutes": 1})
+        youtube, instagram = config.config["tracked_websites"]
+        self.assertEqual(youtube["limit_minutes"], 1)
+        self.assertEqual(youtube["used_seconds"], 60)
+        self.assertEqual(instagram["limit_minutes"], 20)
+
+    def test_chat_website_limit_rejects_invalid_domains_and_values(self):
+        config = types.SimpleNamespace(config={"tracked_websites": []}, save_config=lambda: True)
+        bridge = api_bridge_module.ApiBridge(None, None, None, None, config)
+
+        for domain, minutes in (
+            ("example.com", 1),
+            ("youtube.com", 0),
+            ("youtube.com", 301),
+            ("youtube.com", True),
+        ):
+            with self.subTest(domain=domain, minutes=minutes), self.assertRaises(ValueError):
+                bridge.set_website_limit(domain, minutes)
+
+    def test_chat_website_limit_restores_config_when_save_fails(self):
+        original_config = {"tracked_websites": []}
+        config = types.SimpleNamespace(
+            config=original_config,
+            save_config=lambda: False,
+        )
+        bridge = api_bridge_module.ApiBridge(None, None, None, None, config)
+
+        with self.assertRaises(OSError):
+            bridge.set_website_limit("youtube.com", 1)
+
+        self.assertIs(config.config, original_config)
+
+    def test_file_search_runs_in_background_and_exposes_its_status(self):
+        bridge = api_bridge_module.ApiBridge(None, None, None, None, None)
+        finished = threading.Event()
+        result = {
+            "query": "resume",
+            "matches": [{"name": "resume.pdf", "path": "C:\\Users\\Test\\resume.pdf"}],
+            "scanned_directories": 3,
+            "scanned_entries": 8,
+            "skipped_directories": 0,
+            "skipped_items": 0,
+            "truncated": False,
+            "cancelled": False,
+        }
+
+        def fake_search(query, progress_callback, cancel_event):
+            self.assertEqual(query, "resume")
+            progress_callback({
+                "scanned_directories": 2,
+                "scanned_entries": 5,
+                "skipped_directories": 0,
+                "skipped_items": 0,
+                "match_count": 0,
+                "current_path": "C:\\Users\\Test",
+            })
+            finished.set()
+            return result
+
+        with patch.object(api_bridge_module, "search_files", side_effect=fake_search):
+            search_id = bridge.start_file_search("resume")
+            self.assertTrue(finished.wait(timeout=2))
+            deadline = time.monotonic() + 2
+            while bridge.get_file_search_status(search_id)["status"] == "running":
+                if time.monotonic() >= deadline:
+                    self.fail("Background file search did not complete.")
+                time.sleep(0.01)
+
+        status = bridge.get_file_search_status(search_id)
+        self.assertEqual(status["status"], "completed")
+        self.assertEqual(status["matches"], result["matches"])
+        self.assertEqual(status["match_count"], 1)
+        with self.assertRaises(ValueError):
+            bridge.start_file_search(" ")
+
     def test_window_titles_are_only_notified_while_observation_is_active(self):
         class CharacterWindow:
             def __init__(self):

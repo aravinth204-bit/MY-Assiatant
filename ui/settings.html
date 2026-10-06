@@ -43,6 +43,49 @@
         </div>
       </form>
 
+      <section class="section-card chat-card" aria-labelledby="chat-title">
+        <h2 id="chat-title">Chat with ARAVI</h2>
+        <p>Try “resume enga irukku?” or “YouTube limit 1 minute pannu”. Local commands stay on this laptop; general chat and recent AI chat history go to Google Gemini. Don’t send passwords or private information.</p>
+        <p id="chat-connection-status" class="chat-connection-status" role="status" aria-live="polite">Checking Gemini setup...</p>
+        <div id="chat-messages" class="chat-messages" role="log" aria-live="polite">
+          <p class="chat-message assistant-message">Vanakkam! File thedanuma, illa YouTube limit maathanuma?</p>
+        </div>
+        <form id="chat-form" class="chat-form">
+          <label class="visually-hidden" for="chat-input">Message ARAVI</label>
+          <input
+            id="chat-input"
+            name="message"
+            type="text"
+            maxlength="256"
+            placeholder="Type a command..."
+            autocomplete="off"
+            required
+          >
+          <button class="primary-btn" id="chat-send" type="submit">Send</button>
+        </form>
+      </section>
+
+      <section class="section-card file-finder-card" aria-labelledby="file-finder-title">
+        <h2 id="file-finder-title">Find a file on this laptop</h2>
+        <p>Searches file names on local drives only. File contents are not opened or searched.</p>
+        <form id="file-search-form" class="file-search-form">
+          <label class="visually-hidden" for="file-name">File name or part of the name</label>
+          <input
+            id="file-name"
+            name="file-name"
+            type="search"
+            maxlength="128"
+            placeholder="For example: resume or invoice.pdf"
+            required
+          >
+          <button class="primary-btn" id="file-search-submit" type="submit">Find file</button>
+          <button class="secondary-btn" id="file-search-cancel" type="button" hidden>Cancel</button>
+        </form>
+        <p id="file-search-status" role="status" aria-live="polite"></p>
+        <p id="file-search-progress"></p>
+        <ul id="file-search-results" class="file-search-results" aria-label="File search results"></ul>
+      </section>
+
       <section class="section-card observation-card" aria-labelledby="observation-title">
         <h2 id="observation-title">App activity observation</h2>
         <p>When enabled, ARAVI shows the active window title. Titles stay on this device and are not saved. No screenshots are captured. Website time-limit tracking runs independently.</p>

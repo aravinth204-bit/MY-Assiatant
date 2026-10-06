@@ -5,6 +5,8 @@ import webview
 from typing import Dict, Any, List, Optional
 
 from src.logger import get_logger
+from src.file_finder import search_files
+from src import gemini_chat
 
 logger = get_logger("api_bridge")
 
@@ -29,6 +31,8 @@ class ApiBridge:
         self._observation_lock = threading.Lock()
         self._window_observation_active = False
         self._last_observed_window = None
+        self._file_search_lock = threading.Lock()
+        self._file_search_state = None
 
     def set_roamer(self, roamer):
         self._roamer = roamer
@@ -132,6 +136,126 @@ class ApiBridge:
         except Exception as e:
             logger.error(f"Error in ApiBridge.save_config: {e}", exc_info=True)
             return False
+
+    def set_website_limit(self, domain: str, minutes: int) -> Dict[str, Any]:
+        if domain not in ("youtube.com", "instagram.com"):
+            raise ValueError("ARAVI can change limits for YouTube or Instagram only.")
+        if isinstance(minutes, bool) or not isinstance(minutes, int) or not 1 <= minutes <= 300:
+            raise ValueError("The limit must be a whole number between 1 and 300 minutes.")
+
+        original_config = self._config_manager.config
+        updated_config = dict(original_config)
+        sites = [
+            dict(site)
+            for site in updated_config.get("tracked_websites", [])
+            if isinstance(site, dict)
+        ]
+        site = next(
+            (
+                item for item in sites
+                if isinstance(item.get("domain"), str)
+                and item["domain"].lower().removeprefix("www.") == domain
+            ),
+            None,
+        )
+        if site is None:
+            site = {"domain": domain, "limit_minutes": minutes, "used_seconds": 0}
+            sites.append(site)
+        else:
+            site["limit_minutes"] = minutes
+        updated_config["tracked_websites"] = sites
+        if not self.save_config(updated_config):
+            self._config_manager.config = original_config
+            raise OSError("ARAVI could not save the website limit.")
+        return {"domain": domain, "limit_minutes": minutes}
+
+    def get_chat_status(self) -> Dict[str, bool]:
+        return {"gemini_configured": gemini_chat.is_configured()}
+
+    def chat_with_gemini(self, message: str, history: List[Dict[str, str]] = None) -> str:
+        return gemini_chat.chat(message, history)
+
+    def start_file_search(self, query: str) -> str:
+        if not isinstance(query, str) or not query.strip():
+            raise ValueError("Enter a file name to search for.")
+        if len(query) > 128:
+            raise ValueError("The file name search must be 128 characters or fewer.")
+        cancel_event = threading.Event()
+        search_id = f"file-search-{time.time_ns()}"
+        state = {
+            "id": search_id,
+            "query": query.strip(),
+            "status": "running",
+            "scanned_directories": 0,
+            "scanned_entries": 0,
+            "skipped_directories": 0,
+            "skipped_items": 0,
+            "match_count": 0,
+            "current_path": "Preparing local drive search...",
+            "matches": [],
+            "truncated": False,
+            "cancelled": False,
+            "error": None,
+            "cancel_event": cancel_event,
+        }
+        with self._file_search_lock:
+            if self._file_search_state and self._file_search_state["status"] == "running":
+                raise RuntimeError("A file search is already running.")
+            self._file_search_state = state
+
+        threading.Thread(
+            target=self._run_file_search,
+            args=(state,),
+            name="ARAVI-FileSearch",
+            daemon=True,
+        ).start()
+        return search_id
+
+    def _run_file_search(self, state: Dict[str, Any]):
+        def update_progress(progress):
+            with self._file_search_lock:
+                if self._file_search_state is state:
+                    state.update(progress)
+
+        try:
+            result = search_files(
+                state["query"],
+                progress_callback=update_progress,
+                cancel_event=state["cancel_event"],
+            )
+            with self._file_search_lock:
+                if self._file_search_state is state:
+                    state.update(result)
+                    state["match_count"] = len(result["matches"])
+                    state["status"] = "cancelled" if result["cancelled"] else "completed"
+        except Exception as error:
+            logger.error("Local file search failed: %s", error, exc_info=True)
+            with self._file_search_lock:
+                if self._file_search_state is state:
+                    state["status"] = "failed"
+                    state["error"] = str(error)
+
+    def get_file_search_status(self, search_id: str) -> Dict[str, Any]:
+        with self._file_search_lock:
+            state = self._file_search_state
+            if not state or state["id"] != search_id:
+                raise ValueError("This file search is no longer available.")
+            return {
+                key: value
+                for key, value in state.items()
+                if key not in ("cancel_event",)
+            }
+
+    def cancel_file_search(self, search_id: str) -> bool:
+        with self._file_search_lock:
+            state = self._file_search_state
+            if not state or state["id"] != search_id:
+                raise ValueError("This file search is no longer available.")
+            if state["status"] != "running":
+                return False
+            state["cancel_event"].set()
+            state["current_path"] = "Stopping search..."
+            return True
 
     def start_pomodoro(self, minutes: int = 25):
         try:
