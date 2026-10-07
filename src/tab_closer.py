@@ -13,6 +13,13 @@ try:
 except ImportError:
     HAS_WIN32 = False
 
+try:
+    import win32process
+except ImportError:
+    win32process = None
+
+import psutil
+
 class TabCloser:
     def __init__(
         self,
@@ -20,11 +27,15 @@ class TabCloser:
         on_warning_callback: Optional[Callable[[str, Optional[int]], None]] = None,
         on_folder_state_callback: Optional[Callable[[Optional[str]], None]] = None,
         on_active_window_callback: Optional[Callable[[str], None]] = None,
+        on_active_app_callback: Optional[Callable[[str], None]] = None,
+        is_active_app_observation_enabled: Optional[Callable[[], bool]] = None,
     ):
         self.config_manager = config_manager
         self.on_warning_callback = on_warning_callback
         self.on_folder_state_callback = on_folder_state_callback
         self.on_active_window_callback = on_active_window_callback
+        self.on_active_app_callback = on_active_app_callback
+        self.is_active_app_observation_enabled = is_active_app_observation_enabled
         self.running = False
         self._thread = None
         self._stop_event = threading.Event()
@@ -40,6 +51,17 @@ class TabCloser:
 
     def get_active_window_title(self) -> str:
         return self.get_active_window_info()[0]
+
+    def get_active_app_name(self) -> str:
+        if not HAS_WIN32 or not win32process:
+            return ""
+        try:
+            hwnd = win32gui.GetForegroundWindow()
+            _thread_id, process_id = win32process.GetWindowThreadProcessId(hwnd)
+            return psutil.Process(process_id).name()
+        except Exception:
+            logger.debug("Could not identify the foreground application", exc_info=True)
+            return ""
 
     @staticmethod
     def _site_matches_title(domain: str, title: str) -> bool:
@@ -81,6 +103,14 @@ class TabCloser:
                 active_title, window_class = self.get_active_window_info()
                 if self.on_active_window_callback:
                     self.on_active_window_callback(active_title)
+                should_observe_app = (
+                    self.is_active_app_observation_enabled is None
+                    or self.is_active_app_observation_enabled()
+                )
+                if self.on_active_app_callback and should_observe_app:
+                    app_name = self.get_active_app_name()
+                    if app_name:
+                        self.on_active_app_callback(app_name)
                 title = active_title.lower()
                 folder_name = active_title.strip() if window_class in ("CabinetWClass", "ExploreWClass") else None
                 if self.on_folder_state_callback:

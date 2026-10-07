@@ -100,11 +100,20 @@ def main():
         if window_title:
             api_bridge.observe_active_window(window_title.strip())
 
+    def on_active_app_state(app_name):
+        if app_name:
+            api_bridge.record_app_activity(app_name)
+
+    def is_app_observation_enabled():
+        return api_bridge.get_window_observation_status()
+
     tab_closer = TabCloser(
         config_manager,
         on_warning_callback=on_site_warning,
         on_folder_state_callback=on_folder_state,
-        on_active_window_callback=on_active_window_state
+        on_active_window_callback=on_active_window_state,
+        on_active_app_callback=on_active_app_state,
+        is_active_app_observation_enabled=is_app_observation_enabled
     )
     reminder_manager = ReminderManager(config_manager)
 
@@ -116,13 +125,15 @@ def main():
                 "ARAVI-ASSISTANT Control Center",
                 url=settings_html,
                 js_api=api_bridge,
-                width=680,
-                height=460,
+                width=1240,
+                height=850,
                 resizable=True,
-                min_size=(560, 400)
+                min_size=(980, 680)
             )
         else:
             try:
+                settings_window.load_url(settings_html)
+                settings_window.resize(1240, 850)
                 settings_window.show()
                 settings_window.focus()
             except Exception:
@@ -130,9 +141,10 @@ def main():
                     "ARAVI-ASSISTANT Control Center",
                     url=settings_html,
                     js_api=api_bridge,
-                    width=680,
-                    height=460,
-                    resizable=True
+                    width=1240,
+                    height=850,
+                    resizable=True,
+                    min_size=(980, 680)
                 )
 
     api_bridge = ApiBridge(

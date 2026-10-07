@@ -24,8 +24,8 @@ class SystemMonitor:
             disk_info = psutil.disk_usage('/')
             
             battery = psutil.sensors_battery()
-            battery_pct = battery.percent if battery else 100
-            is_plugged = battery.power_plugged if battery else True
+            battery_pct = battery.percent if battery else None
+            is_plugged = battery.power_plugged if battery else None
 
             # CPU High load duration tracker (> 85% for 2+ minutes)
             if cpu_percent > 85.0:
@@ -35,7 +35,9 @@ class SystemMonitor:
                 self.high_cpu_start_time = None
 
             cpu_high_duration = (time.time() - self.high_cpu_start_time) if self.high_cpu_start_time else 0
-            is_tired = (cpu_high_duration >= 120) or (battery_pct < 15 and not is_plugged)
+            is_tired = (cpu_high_duration >= 120) or (
+                battery_pct is not None and battery_pct < 15 and not is_plugged
+            )
             is_storage_alert = disk_info.percent >= self.storage_threshold_pct
 
             return {
@@ -61,8 +63,8 @@ class SystemMonitor:
                 "disk_percent": 0.0,
                 "disk_free_gb": 0.0,
                 "disk_total_gb": 0.0,
-                "battery_percent": 100,
-                "is_plugged": True,
+                "battery_percent": None,
+                "is_plugged": None,
                 "is_tired": False,
                 "is_storage_alert": False
             }

@@ -1,14 +1,26 @@
 import json
+import os
 import threading
 import time
+from datetime import date, datetime
 import webview
-from typing import Dict, Any, List, Optional
+from typing import Callable, Dict, Any, List, Optional
 
 from src.logger import get_logger
 from src.file_finder import search_files
 from src import gemini_chat
+from src import local_chat
+from src import opencode_chat
 
 logger = get_logger("api_bridge")
+
+
+def _chat_api_result(chat_function: Callable[..., str], *args: Any) -> Dict[str, str]:
+    try:
+        return {"reply": chat_function(*args)}
+    except (RuntimeError, ValueError) as error:
+        return {"error": str(error)}
+
 
 try:
     import win32api
@@ -31,6 +43,9 @@ class ApiBridge:
         self._observation_lock = threading.Lock()
         self._window_observation_active = False
         self._last_observed_window = None
+        self._last_activity_app = None
+        self._last_activity_at = None
+        self._last_activity_saved_at = 0.0
         self._file_search_lock = threading.Lock()
         self._file_search_state = None
 
@@ -112,15 +127,158 @@ class ApiBridge:
         with self._observation_lock:
             self._window_observation_active = True
             self._last_observed_window = None
+            self._last_activity_app = None
+            self._last_activity_at = None
+            self._last_activity_saved_at = time.monotonic()
         self.notify_ui('idle', 'App activity observation is on. Window titles stay on this device.')
         return True
 
     def stop_window_observation(self) -> bool:
         with self._observation_lock:
+            self._flush_current_app_activity(time.monotonic())
             self._window_observation_active = False
             self._last_observed_window = None
+            self._last_activity_app = None
+            self._last_activity_at = None
         self.notify_ui('idle', 'App activity observation is off.')
         return False
+
+    def get_app_activity_history(self) -> List[Dict[str, Any]]:
+        with self._observation_lock:
+            history = self._config_manager.get("app_activity_history", [])
+            if not isinstance(history, list):
+                return []
+            records = [
+                dict(entry)
+                for entry in history
+                if isinstance(entry, dict)
+                and isinstance(entry.get("app"), str)
+                and isinstance(entry.get("date"), str)
+            ]
+            return sorted(
+                records,
+                key=lambda item: (item["date"], self._activity_seconds(item)),
+                reverse=True,
+            )
+
+    def get_dashboard_activity_history(self) -> List[Dict[str, str]]:
+        with self._observation_lock:
+            history = self._config_manager.get("dashboard_activity_history", [])
+            if not isinstance(history, list):
+                return []
+            records = [
+                {"timestamp": entry["timestamp"], "label": entry["label"]}
+                for entry in history
+                if isinstance(entry, dict)
+                and isinstance(entry.get("timestamp"), str)
+                and isinstance(entry.get("label"), str)
+            ]
+            return sorted(records, key=lambda item: item["timestamp"], reverse=True)
+
+    def record_dashboard_activity(self, activity_type: str) -> bool:
+        labels = {
+            "chat": "Chat with ARAVI",
+            "file_search": "Searched local file names",
+            "website_limits": "Updated website limits",
+        }
+        if not isinstance(activity_type, str) or activity_type not in labels:
+            raise ValueError("Unsupported dashboard activity.")
+
+        with self._observation_lock:
+            history = self._config_manager.get("dashboard_activity_history", [])
+            if not isinstance(history, list):
+                history = []
+            existing = [
+                entry for entry in history
+                if isinstance(entry, dict)
+                and isinstance(entry.get("timestamp"), str)
+                and isinstance(entry.get("label"), str)
+            ]
+            record = {
+                "timestamp": datetime.now().astimezone().isoformat(timespec="minutes"),
+                "label": labels[activity_type],
+            }
+            self._config_manager.config["dashboard_activity_history"] = [record, *existing[:49]]
+            if not self._config_manager.save_config():
+                logger.error("Could not save dashboard activity history")
+                return False
+            return True
+
+    def record_app_activity(self, app_name: str):
+        if not isinstance(app_name, str):
+            return
+        app_name = os.path.basename(app_name.strip())
+        if app_name.lower().endswith(".exe"):
+            app_name = app_name[:-4]
+        app_name = app_name.strip()
+        if not app_name:
+            return
+        app_name = app_name[:128]
+
+        with self._observation_lock:
+            if not self._window_observation_active:
+                return
+            now = time.monotonic()
+            previous_app = self._last_activity_app
+            previous_at = self._last_activity_at
+            if previous_app and previous_at is not None:
+                self._add_app_activity_seconds(
+                    previous_app,
+                    min(15.0, max(0.0, now - previous_at)),
+                )
+
+            app_changed = previous_app != app_name
+            self._last_activity_app = app_name
+            self._last_activity_at = now
+            if app_changed or now - self._last_activity_saved_at >= 30:
+                self._save_app_activity()
+                self._last_activity_saved_at = now
+
+    def _flush_current_app_activity(self, now: float):
+        if self._last_activity_app and self._last_activity_at is not None:
+            self._add_app_activity_seconds(
+                self._last_activity_app,
+                min(15.0, max(0.0, now - self._last_activity_at)),
+            )
+            self._save_app_activity()
+            self._last_activity_saved_at = now
+
+    def _add_app_activity_seconds(self, app_name: str, seconds: float):
+        if seconds <= 0:
+            return
+        history = self._config_manager.get("app_activity_history", [])
+        if not isinstance(history, list):
+            history = []
+        else:
+            history = [entry for entry in history if isinstance(entry, dict)]
+        today = date.today().isoformat()
+        entry = next(
+            (
+                item for item in history
+                if item.get("app") == app_name and item.get("date") == today
+            ),
+            None,
+        )
+        if entry is None:
+            entry = {"date": today, "app": app_name, "seconds": 0.0}
+            history.append(entry)
+        try:
+            previous_seconds = max(0.0, float(entry.get("seconds", 0) or 0))
+        except (TypeError, ValueError):
+            previous_seconds = 0.0
+        entry["seconds"] = round(previous_seconds + seconds, 2)
+        self._config_manager.config["app_activity_history"] = history
+
+    def _save_app_activity(self):
+        if not self._config_manager.save_config():
+            logger.error("Could not save local app activity history")
+
+    @staticmethod
+    def _activity_seconds(entry: Dict[str, Any]) -> float:
+        try:
+            return max(0.0, float(entry.get("seconds", 0) or 0))
+        except (TypeError, ValueError):
+            return 0.0
 
     def observe_active_window(self, window_title: str):
         with self._observation_lock:
@@ -172,8 +330,22 @@ class ApiBridge:
     def get_chat_status(self) -> Dict[str, bool]:
         return {"gemini_configured": gemini_chat.is_configured()}
 
-    def chat_with_gemini(self, message: str, history: List[Dict[str, str]] = None) -> str:
-        return gemini_chat.chat(message, history)
+    def chat_with_gemini(
+        self,
+        message: str,
+        history: List[Dict[str, str]] = None,
+        use_search: bool = True,
+    ) -> Dict[str, str]:
+        return _chat_api_result(gemini_chat.chat, message, history, use_search)
+
+    def chat_with_local_model(self, message: str, history: List[Dict[str, str]] = None) -> Dict[str, str]:
+        return _chat_api_result(local_chat.chat, message, history)
+
+    def chat_with_local_search(self, message: str, history: List[Dict[str, str]] = None) -> Dict[str, str]:
+        return _chat_api_result(local_chat.chat_with_search, message, history)
+
+    def chat_with_opencode(self, message: str, history: List[Dict[str, str]] = None) -> Dict[str, str]:
+        return _chat_api_result(opencode_chat.chat, message, history)
 
     def start_file_search(self, query: str) -> str:
         if not isinstance(query, str) or not query.strip():

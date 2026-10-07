@@ -13,6 +13,8 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         {"domain": "youtube.com", "limit_minutes": 30, "used_seconds": 0},
         {"domain": "instagram.com", "limit_minutes": 20, "used_seconds": 0}
     ],
+    "app_activity_history": [],
+    "dashboard_activity_history": [],
     "reminders": [
         {"id": 1, "text": "Drink Water", "interval_minutes": 60, "enabled": True},
         {"id": 2, "text": "Stretch and relax eyes", "interval_minutes": 45, "enabled": True}

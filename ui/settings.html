@@ -3,96 +3,219 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ARAVI-ASSISTANT — Control Center & Settings</title>
+  <title>ARAVI-ASSISTANT — Personal AI Assistant</title>
   <link rel="stylesheet" href="settings.css">
 </head>
 <body>
   <div class="app-window">
-    <main class="main-content limits-content">
-      <header class="panel-header">
-        <h1>Website time limits</h1>
-        <p>YouTube and Instagram</p>
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard-panel" data-page="dashboard-panel" aria-label="ARAVI Assistant dashboard">
+        <span class="brand-mark" aria-hidden="true">A</span>
+        <span>
+          <strong>ARAVI-<span>ASSISTANT</span></strong>
+          <small>Your Personal AI Assistant</small>
+        </span>
+      </a>
+
+      <nav class="nav-menu" aria-label="Dashboard sections">
+        <a class="nav-btn active" href="#dashboard-panel" data-page="dashboard-panel"><span aria-hidden="true">▦</span>Dashboard</a>
+        <a class="nav-btn" href="#chat-panel" data-page="chat-panel"><span aria-hidden="true">▤</span>AI Chat</a>
+        <a class="nav-btn" href="#file-panel" data-page="file-panel"><span aria-hidden="true">⌕</span>File Search</a>
+        <a class="nav-btn" href="#limits-panel" data-page="limits-panel"><span aria-hidden="true">◷</span>Website Limits</a>
+        <a class="nav-btn" href="#activity-panel" data-page="activity-panel"><span aria-hidden="true">⌁</span>Activity Monitor</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span aria-hidden="true">✦</span>
+        <p>Work smarter,<br>not harder.</p>
+        <small>— ARAVI</small>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-brand">
+          <strong>ARAVI <span>PERSONAL ASSISTANT</span></strong>
+          <small>Your day, made simpler.</small>
+        </div>
+        <p class="ready-indicator"><span></span>Assistant Ready</p>
       </header>
 
-      <form id="limits-form">
-        <section class="section-card limit-list" aria-label="Website time limits">
-          <div class="limit-row">
-            <label for="youtube-limit">
-              <strong>YouTube</strong>
-              <span>youtube.com</span>
-            </label>
-            <div class="limit-control">
-              <input id="youtube-limit" name="youtube" type="number" min="1" max="300" value="30" required>
-              <span>minutes</span>
-            </div>
+      <section class="dashboard-content page-panel active" id="dashboard-panel">
+        <section class="welcome-row" aria-label="Welcome">
+          <div class="welcome-avatar" aria-hidden="true">A</div>
+          <div class="welcome-copy">
+            <h1>Welcome back, Thala!</h1>
+            <p>I'm ARAVI, your personal AI assistant. How can I help you today?</p>
           </div>
-          <div class="limit-row">
-            <label for="instagram-limit">
-              <strong>Instagram</strong>
-              <span>instagram.com</span>
-            </label>
-            <div class="limit-control">
-              <input id="instagram-limit" name="instagram" type="number" min="1" max="300" value="20" required>
-              <span>minutes</span>
-            </div>
+          <p class="welcome-note">Let's get<br>things done.</p>
+          <div class="system-status">
+            <span class="status-icon" aria-hidden="true">◉</span>
+            <span><strong>System Status</strong><small>All systems running smoothly</small></span>
           </div>
         </section>
-        <div class="save-row">
-          <p id="save-status" role="status" aria-live="polite"></p>
-          <button class="primary-btn" type="submit">Save limits</button>
-        </div>
-      </form>
 
-      <section class="section-card chat-card" aria-labelledby="chat-title">
-        <h2 id="chat-title">Chat with ARAVI</h2>
-        <p>Try “resume enga irukku?” or “YouTube limit 1 minute pannu”. Local commands stay on this laptop; general chat and recent AI chat history go to Google Gemini. Don’t send passwords or private information.</p>
-        <p id="chat-connection-status" class="chat-connection-status" role="status" aria-live="polite">Checking Gemini setup...</p>
-        <div id="chat-messages" class="chat-messages" role="log" aria-live="polite">
-          <p class="chat-message assistant-message">Vanakkam! File thedanuma, illa YouTube limit maathanuma?</p>
-        </div>
-        <form id="chat-form" class="chat-form">
-          <label class="visually-hidden" for="chat-input">Message ARAVI</label>
-          <input
-            id="chat-input"
-            name="message"
-            type="text"
-            maxlength="256"
-            placeholder="Type a command..."
-            autocomplete="off"
-            required
-          >
-          <button class="primary-btn" id="chat-send" type="submit">Send</button>
-        </form>
+        <section class="section-card dashboard-action-card" aria-labelledby="dashboard-action-heading">
+          <div class="card-heading">
+            <span class="section-icon" aria-hidden="true">▤</span>
+            <div>
+              <h2 id="dashboard-action-heading">Recent ARAVI Activity</h2>
+              <p>Recent chats, file searches, and website limit changes.</p>
+            </div>
+          </div>
+          <p id="dashboard-action-status" class="activity-status" role="status" aria-live="polite"></p>
+          <p id="dashboard-action-empty" class="activity-empty">No ARAVI activity yet.</p>
+          <ul id="dashboard-action-list" class="activity-list" aria-label="Recent ARAVI activity"></ul>
+        </section>
+
+        <section class="section-card dashboard-activity-card" aria-labelledby="dashboard-activity-heading">
+          <div class="card-heading">
+            <span class="section-icon" aria-hidden="true">⌁</span>
+            <div>
+              <h2 id="dashboard-activity-heading">Recent App Usage</h2>
+              <p>App names and time used, saved on this laptop.</p>
+            </div>
+            <a class="outline-btn" href="#activity-panel" data-page="activity-panel">View all <span aria-hidden="true">→</span></a>
+          </div>
+          <p id="dashboard-activity-empty" class="activity-empty">No activity recorded yet. Start monitoring to build your history.</p>
+          <ul id="dashboard-activity-list" class="activity-list" aria-label="Recent app activity"></ul>
+        </section>
       </section>
 
-      <section class="section-card file-finder-card" aria-labelledby="file-finder-title">
-        <h2 id="file-finder-title">Find a file on this laptop</h2>
-        <p>Searches file names on local drives only. File contents are not opened or searched.</p>
-        <form id="file-search-form" class="file-search-form">
-          <label class="visually-hidden" for="file-name">File name or part of the name</label>
-          <input
-            id="file-name"
-            name="file-name"
-            type="search"
-            maxlength="128"
-            placeholder="For example: resume or invoice.pdf"
-            required
-          >
-          <button class="primary-btn" id="file-search-submit" type="submit">Find file</button>
-          <button class="secondary-btn" id="file-search-cancel" type="button" hidden>Cancel</button>
-        </form>
-        <p id="file-search-status" role="status" aria-live="polite"></p>
-        <p id="file-search-progress"></p>
-        <ul id="file-search-results" class="file-search-results" aria-label="File search results"></ul>
+      <section class="dashboard-content page-panel chat-panel" id="chat-panel" hidden>
+          <section class="section-card chat-card" aria-labelledby="chat-title">
+            <div class="card-heading compact-heading">
+              <span class="section-icon" aria-hidden="true">▤</span>
+              <div>
+                <h2 id="chat-title">Chat with Karupu <span class="powered-badge" id="chat-agent-badge">✦ Gemini + Web Search</span></h2>
+                <p>Ask Karupu questions, get help, or give a command.</p>
+              </div>
+              <span class="chat-sparkle" aria-hidden="true">✧</span>
+            </div>
+            <p class="privacy-note">Web Search sends your question to Tavily Search, then Ollama answers locally. Gemini sends messages to Google. Local Ollama stays on this laptop. OpenCode chat disables tool calls and sends prompts to the provider configured in your OpenCode server; start it with <code>opencode serve --hostname 127.0.0.1 --port 4096</code>. Don't send passwords or private information.</p>
+            <div id="chat-messages" class="chat-messages" role="log" aria-live="polite">
+            </div>
+            <form id="chat-form" class="chat-form">
+              <label class="visually-hidden" for="chat-input">Message Karupu</label>
+              <input
+                id="chat-input"
+                name="message"
+                type="text"
+                maxlength="256"
+                placeholder="Ask Karupu anything..."
+                autocomplete="off"
+                required
+              >
+              <label class="visually-hidden" for="chat-agent">Choose chat agent</label>
+              <select class="chat-agent-select" id="chat-agent" name="agent">
+                <option value="web-search">Karupu: Web Search (Ollama)</option>
+                <option value="quick-chat">Karupu: Gemini</option>
+                <option value="local-ollama">Karupu: Local Ollama</option>
+                <option value="opencode">Karupu: OpenCode</option>
+              </select>
+              <button class="primary-btn" id="chat-send" type="submit">➤ <span>Send</span></button>
+            </form>
+          </section>
+
       </section>
 
-      <section class="section-card observation-card" aria-labelledby="observation-title">
-        <h2 id="observation-title">App activity observation</h2>
-        <p>When enabled, ARAVI shows the active window title. Titles stay on this device and are not saved. No screenshots are captured. Website time-limit tracking runs independently.</p>
-        <div class="observation-controls">
-          <p id="observation-status" role="status" aria-live="polite">Observation is off.</p>
-          <button class="secondary-btn" id="observation-toggle" type="button">Start observing</button>
-        </div>
+      <section class="dashboard-content page-panel" id="file-panel" hidden>
+          <section class="section-card file-finder-card" aria-labelledby="file-finder-title">
+            <div class="card-heading compact-heading">
+              <span class="section-icon" aria-hidden="true">⌕</span>
+              <div>
+                <h2 id="file-finder-title">Find Files</h2>
+                <p>Search file names on your laptop.</p>
+              </div>
+              <span class="info-note" title="File contents are not read or searched.">ⓘ Names only</span>
+            </div>
+            <p class="file-privacy-note">Searches local drives. File contents are not opened or searched.</p>
+            <form id="file-search-form" class="file-search-form">
+              <label class="visually-hidden" for="file-name">File name or part of the name</label>
+              <input
+                id="file-name"
+                name="file-name"
+                type="search"
+                maxlength="128"
+                placeholder="Enter a file or folder name..."
+                required
+              >
+              <button class="primary-btn" id="file-search-submit" type="submit">⌕ <span>Search</span></button>
+              <button class="secondary-btn" id="file-search-cancel" type="button" hidden>Cancel</button>
+            </form>
+            <p id="file-search-status" role="status" aria-live="polite"></p>
+            <p id="file-search-progress"></p>
+            <ul id="file-search-results" class="file-search-results" aria-label="File search results"></ul>
+          </section>
+      </section>
+
+      <section class="dashboard-content page-panel" id="limits-panel" hidden>
+        <section class="section-card limits-card" id="limits-title" aria-labelledby="limits-heading">
+          <div class="card-heading">
+            <span class="section-icon" aria-hidden="true">◷</span>
+            <div>
+              <h2 id="limits-heading">Website Limits</h2>
+              <p>Control your daily time on YouTube and Instagram.</p>
+            </div>
+          </div>
+
+          <form id="limits-form">
+            <div class="limit-cards">
+              <article class="limit-site-card">
+                <span class="site-icon youtube-icon" aria-hidden="true">▶</span>
+                <label for="youtube-limit"><strong>YouTube</strong><small>youtube.com</small></label>
+                <div class="limit-control">
+                  <input id="youtube-limit" name="youtube" type="number" min="1" max="300" value="30" required>
+                  <span>min</span>
+                </div>
+                <div class="usage-meter">
+                  <span id="youtube-usage-label">0 min used</span>
+                  <div class="usage-track"><span id="youtube-usage-bar"></span></div>
+                </div>
+              </article>
+              <article class="limit-site-card">
+                <span class="site-icon instagram-icon" aria-hidden="true">◎</span>
+                <label for="instagram-limit"><strong>Instagram</strong><small>instagram.com</small></label>
+                <div class="limit-control">
+                  <input id="instagram-limit" name="instagram" type="number" min="1" max="300" value="20" required>
+                  <span>min</span>
+                </div>
+                <div class="usage-meter">
+                  <span id="instagram-usage-label">0 min used</span>
+                  <div class="usage-track"><span id="instagram-usage-bar"></span></div>
+                </div>
+              </article>
+            </div>
+            <div class="save-row">
+              <p id="save-status" role="status" aria-live="polite"></p>
+              <button class="primary-btn" type="submit">Save limits</button>
+            </div>
+          </form>
+        </section>
+      </section>
+
+      <section class="dashboard-content page-panel" id="activity-panel" hidden>
+        <section class="section-card observation-card" aria-labelledby="observation-title">
+          <span class="section-icon" aria-hidden="true">⌁</span>
+          <div class="observation-copy">
+            <h2 id="observation-title">Activity Monitor <span class="monitor-badge" id="monitor-state">● OFF</span></h2>
+            <p>See which apps are open and how long they are in use.</p>
+            <p id="observation-status" role="status" aria-live="polite">Observation is off.</p>
+            <small>Monitoring starts only when enabled. App names and durations stay on this laptop; window titles and screenshots are not saved.</small>
+          </div>
+          <button class="secondary-btn" id="observation-toggle" type="button">Start Monitoring</button>
+        </section>
+        <section class="section-card activity-history-card" aria-labelledby="activity-history-heading">
+          <div class="card-heading">
+            <span class="section-icon" aria-hidden="true">◷</span>
+            <div>
+              <h2 id="activity-history-heading">App Usage History</h2>
+              <p>Daily time by application while monitoring was on.</p>
+            </div>
+          </div>
+          <p id="activity-history-empty" class="activity-empty">No activity recorded yet. Start monitoring to build your history.</p>
+          <ul id="activity-history-list" class="activity-list" aria-label="App usage history"></ul>
+        </section>
       </section>
     </main>
   </div>

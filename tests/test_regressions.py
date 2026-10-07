@@ -78,6 +78,20 @@ class SystemMonitorTests(unittest.TestCase):
                     patch.object(system_monitor_module.psutil, "sensors_battery", return_value=None):
                 self.assertEqual(monitor.get_system_stats()["is_storage_alert"], expected)
 
+    def test_missing_battery_sensor_is_reported_as_unavailable(self):
+        monitor = system_monitor_module.SystemMonitor()
+        ram = types.SimpleNamespace(percent=40, used=4, total=10)
+        disk = types.SimpleNamespace(percent=50, free=100, total=1000)
+        with patch.object(system_monitor_module.psutil, "cpu_percent", return_value=10), \
+                patch.object(system_monitor_module.psutil, "virtual_memory", return_value=ram), \
+                patch.object(system_monitor_module.psutil, "disk_usage", return_value=disk), \
+                patch.object(system_monitor_module.psutil, "sensors_battery", return_value=None):
+            stats = monitor.get_system_stats()
+
+        self.assertIsNone(stats["battery_percent"])
+        self.assertIsNone(stats["is_plugged"])
+        self.assertFalse(stats["is_tired"])
+
     def test_rejects_invalid_storage_thresholds(self):
         for threshold in (-1, 101, "90", True):
             with self.subTest(threshold=threshold), self.assertRaises(ValueError):
@@ -134,6 +148,45 @@ class FakeConfig:
 
 
 class TabCloserTests(unittest.TestCase):
+    def test_active_app_callback_uses_the_foreground_process_name(self):
+        service = tab_closer_module.TabCloser(FakeConfig(0, limit_minutes=0))
+        with patch.object(tab_closer_module, "HAS_WIN32", True), \
+                patch.object(
+                    tab_closer_module,
+                    "win32gui",
+                    types.SimpleNamespace(GetForegroundWindow=lambda: 42),
+                    create=True,
+                ), \
+                patch.object(
+                    tab_closer_module,
+                    "win32process",
+                    types.SimpleNamespace(GetWindowThreadProcessId=lambda hwnd: (1, 314)),
+                ), \
+                patch.object(
+                    tab_closer_module.psutil,
+                    "Process",
+                    return_value=types.SimpleNamespace(name=lambda: "chrome.exe"),
+                    create=True,
+                ) as process:
+            self.assertEqual(service.get_active_app_name(), "chrome.exe")
+        process.assert_called_once_with(314)
+
+    def test_active_app_is_not_inspected_when_observation_is_disabled(self):
+        clock = FakeClock()
+        clock.readings = [10, 10, 10]
+        service = tab_closer_module.TabCloser(
+            FakeConfig(0, limit_minutes=0),
+            on_active_app_callback=lambda _name: self.fail("App should not be recorded"),
+            is_active_app_observation_enabled=lambda: False,
+        )
+        service.running = True
+        service._stop_event = FakeStopEvent(clock, stop_after_waits=1)
+        service.get_active_window_info = lambda: ("Editor - private notes", "")
+        service.get_active_app_name = lambda: self.fail("Foreground process should not be inspected")
+
+        with patch.object(tab_closer_module.time, "monotonic", side_effect=clock.monotonic):
+            service._loop()
+
     def test_active_window_callback_receives_foreground_title(self):
         config = FakeConfig(0, limit_minutes=0)
         clock = FakeClock()
@@ -248,6 +301,14 @@ class TabCloserTests(unittest.TestCase):
 
 
 class ScreenObservationTests(unittest.TestCase):
+    def test_opencode_chat_is_exposed_through_the_api_bridge(self):
+        bridge = api_bridge_module.ApiBridge(None, None, None, None, None)
+        with patch.object(api_bridge_module.opencode_chat, "chat", return_value="Karupu reply") as chat:
+            result = bridge.chat_with_opencode("Hello", [])
+
+        self.assertEqual(result, {"reply": "Karupu reply"})
+        chat.assert_called_once_with("Hello", [])
+
     def test_chat_website_limit_update_saves_allowed_site(self):
         config = types.SimpleNamespace(
             config={
@@ -370,6 +431,45 @@ class ScreenObservationTests(unittest.TestCase):
         bridge.observe_active_window("Another window")
         self.assertFalse(bridge.get_window_observation_status())
         self.assertEqual(len(character.scripts), 3)
+
+    def test_app_usage_is_aggregated_and_saved_only_while_monitoring(self):
+        class MemoryConfig:
+            def __init__(self):
+                self.config = {"app_activity_history": []}
+                self.save_count = 0
+
+            def get(self, key, default=None):
+                return self.config.get(key, default)
+
+            def save_config(self):
+                self.save_count += 1
+                return True
+
+        config = MemoryConfig()
+        bridge = api_bridge_module.ApiBridge(None, None, None, None, config)
+
+        bridge.record_app_activity("ignored.exe")
+        self.assertEqual(config.config["app_activity_history"], [])
+
+        with patch.object(api_bridge_module.time, "monotonic", side_effect=[100, 105, 125, 145, 155]):
+            bridge.start_window_observation()
+            bridge.record_app_activity("chrome.exe")
+            bridge.record_app_activity("chrome.exe")
+            bridge.record_app_activity("Code.exe")
+            bridge.stop_window_observation()
+
+        history = bridge.get_app_activity_history()
+        by_app = {entry["app"]: entry["seconds"] for entry in history}
+        self.assertEqual(by_app, {"chrome": 30, "Code": 10})
+        self.assertNotIn("window_title", str(history))
+        self.assertGreaterEqual(config.save_count, 2)
+
+        self.assertTrue(bridge.record_dashboard_activity("file_search"))
+        dashboard_history = bridge.get_dashboard_activity_history()
+        self.assertEqual(dashboard_history[0]["label"], "Searched local file names")
+        self.assertNotIn("private", str(dashboard_history))
+        with self.assertRaises(ValueError):
+            bridge.record_dashboard_activity("private file name")
 
     def test_hiding_warning_restores_expanded_mascot_window_size(self):
         class CharacterWindow:
