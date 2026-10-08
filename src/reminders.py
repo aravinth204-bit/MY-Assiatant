@@ -8,9 +8,15 @@ from src.logger import get_logger
 logger = get_logger("reminders")
 
 class ReminderManager:
-    def __init__(self, config_manager, on_notify_callback: Optional[Callable[[str, str], None]] = None):
+    def __init__(
+        self,
+        config_manager,
+        on_notify_callback: Optional[Callable[[str, str], None]] = None,
+        on_water_reminder_callback: Optional[Callable[[], None]] = None,
+    ):
         self.config_manager = config_manager
         self.on_notify_callback = on_notify_callback
+        self.on_water_reminder_callback = on_water_reminder_callback
         self.running = False
         self._thread = None
         self._stop_event = threading.Event()
@@ -18,6 +24,46 @@ class ReminderManager:
         self.pomodoro_end_time = 0
         self.pomodoro_mode = "work" # "work" or "break"
         self._notification_cooldowns: Dict[str, float] = {}
+        self._water_reminder_notified = False
+
+    def _save_water_reminder_state(self, pending: bool, next_at: float):
+        original_config = getattr(self.config_manager, "config", None)
+        if not isinstance(original_config, dict):
+            raise RuntimeError("Water reminder state requires a writable configuration.")
+
+        updated_config = dict(original_config)
+        updated_config["water_reminder_pending"] = pending
+        updated_config["water_reminder_next_at"] = next_at
+        self.config_manager.config = updated_config
+        if not self.config_manager.save_config():
+            self.config_manager.config = original_config
+            raise OSError("Could not save water reminder state.")
+
+    def _check_water_reminder(self, now: float):
+        pending = bool(self.config_manager.get("water_reminder_pending", False))
+        if pending:
+            if not self._water_reminder_notified and self.on_water_reminder_callback:
+                self.on_water_reminder_callback()
+                self._water_reminder_notified = True
+            return
+
+        interval = self.config_manager.get("water_reminder_interval_minutes", 60)
+        if isinstance(interval, bool) or not isinstance(interval, int) or not 1 <= interval <= 300:
+            raise ValueError("Water reminder interval must be between 1 and 300 minutes.")
+
+        next_at = self.config_manager.get("water_reminder_next_at", 0)
+        if isinstance(next_at, bool) or not isinstance(next_at, (int, float)):
+            raise ValueError("Water reminder schedule is invalid.")
+        if next_at <= 0:
+            self._save_water_reminder_state(False, now + interval * 60)
+            return
+        if now < next_at:
+            return
+
+        self._save_water_reminder_state(True, 0)
+        if self.on_water_reminder_callback:
+            self.on_water_reminder_callback()
+            self._water_reminder_notified = True
 
     def should_notify(self, key: str, cooldown_seconds: float = 300.0) -> bool:
         """Enforce cooldown so the same notification type cannot repeat within cooldown_seconds."""
@@ -106,6 +152,8 @@ class ReminderManager:
             try:
                 now = time.time()
 
+                self._check_water_reminder(now)
+
                 # 1. Check Pomodoro
                 if self.pomodoro_active:
                     if now >= self.pomodoro_end_time:
@@ -124,6 +172,8 @@ class ReminderManager:
                 # 2. Check scheduled / interval reminders
                 reminders: List[Dict[str, Any]] = self.config_manager.get("reminders", [])
                 for r in reminders:
+                    if str(r.get("text", "")).strip().casefold() == "drink water":
+                        continue
                     if r.get("enabled", True):
                         interval = r.get("interval_minutes", 60)
                         last_triggered = r.get("last_triggered", 0)

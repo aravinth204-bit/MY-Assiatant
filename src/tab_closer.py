@@ -159,7 +159,19 @@ class TabCloser:
                                     site["used_seconds"] = 0
                                     self.config_manager.save_config()
                                 break
-                            break
+                            
+                            # Focus mode: check if website is blocked and focus is active
+                            focus_config = self.config_manager.get("focus_mode", {})
+                            if focus_config.get("enabled") and focus_config.get("auto_pause_mascot"):
+                                # Check if current site is in blocked list
+                                blocked = focus_config.get("blocked_websites", [])
+                                if any(blown_domain in domain for blown_domain in blocked):
+                                    logger.info(f"Focus mode: blocking {domain} during focus session")
+                                    # Pause tab closing during focus
+                                    if self._stop_event.wait(0.1):
+                                        break
+                                    continue
+                        break
             except Exception as e:
                 logger.error(f"Unexpected error in TabCloser loop: {e}", exc_info=True)
 

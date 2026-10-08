@@ -1,6 +1,11 @@
 @echo off
 cd /d "%~dp0"
 
+if exist "%~dp0.venv\Scripts\python.exe" (
+    "%~dp0.venv\Scripts\python.exe" main.py
+    exit /b %ERRORLEVEL%
+)
+
 where python >nul 2>nul
 if %ERRORLEVEL% EQU 0 (
     python main.py

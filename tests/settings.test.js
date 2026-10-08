@@ -46,6 +46,8 @@ function createSettingsHarness(config, fileSearch = async () => ({
     hidden: link.dataset.page !== 'dashboard-panel'
   }));
   const activityEvents = [];
+  let waterReminderInterval = 60;
+  let waterReminderPending = false;
   const makeActivityList = () => ({
     items: [],
     replaceChildren() {
@@ -56,6 +58,27 @@ function createSettingsHarness(config, fileSearch = async () => ({
     }
   });
   const elements = {
+    'water-reminder-form': {
+      addEventListener: (event, handler) => {
+        listeners.waterReminder = handler;
+      }
+    },
+    'water-reminder-interval': { value: '60' },
+    'water-reminder-status': { textContent: '' },
+    'water-reminder-dialog': { hidden: true },
+    'water-reminder-response-status': { textContent: '' },
+    'water-reminder-yes': {
+      disabled: false,
+      addEventListener: (event, handler) => {
+        listeners.waterReminderYes = handler;
+      }
+    },
+    'water-reminder-no': {
+      disabled: false,
+      addEventListener: (event, handler) => {
+        listeners.waterReminderNo = handler;
+      }
+    },
     'limits-form': {
       addEventListener: (event, handler) => {
         listeners.submit = handler;
@@ -148,6 +171,7 @@ function createSettingsHarness(config, fileSearch = async () => ({
         listeners.domContentLoaded = handler;
       },
       getElementById: id => elements[id],
+      activeElement: null,
       querySelectorAll: () => [],
       createElement: tagName => ({
         tagName,
@@ -174,6 +198,19 @@ function createSettingsHarness(config, fileSearch = async () => ({
       pywebview: {
         api: {
           get_config: async () => JSON.parse(JSON.stringify(config)),
+          get_water_reminder_status: async () => ({
+            interval_minutes: waterReminderInterval,
+            pending: waterReminderPending
+          }),
+          set_water_reminder_interval: async minutes => {
+            waterReminderInterval = minutes;
+            waterReminderPending = false;
+            return { interval_minutes: minutes, pending: false };
+          },
+          respond_to_water_reminder: async answer => {
+            waterReminderPending = false;
+            return { next_reminder_minutes: answer === 'yes' ? waterReminderInterval : 10 };
+          },
           search_files: fileSearch,
           start_file_search: searchApi.start || (async () => 'search-1'),
           get_file_search_status: searchApi.getStatus || (async () => ({
@@ -291,6 +328,28 @@ test('chat page uses the available height without welcome prompts or unavailable
   assert.doesNotMatch(chatMarkup, /Try these:|data-chat-prompt|chat-connection-status|ARAVI is not available/);
   assert.match(settingsCss, /\.chat-panel\s*\{[^}]*height:\s*calc\(100vh - 64px\)/);
   assert.match(settingsCss, /\.chat-messages\s*\{[^}]*flex:\s*1 1 auto/);
+});
+
+test('Website Limits shows the water reminder setting before the daily limit controls', () => {
+  const waterFormIndex = settingsHtml.indexOf('id="water-reminder-form"');
+  const limitsFormIndex = settingsHtml.indexOf('id="limits-form"');
+
+  assert.ok(waterFormIndex >= 0);
+  assert.ok(waterFormIndex < limitsFormIndex);
+  assert.match(settingsHtml, /id="water-reminder-interval"[^>]*min="1" max="300"/);
+  assert.match(settingsHtml, /Untitled%20design%20\(3\)\.gif/);
+  assert.match(settingsHtml, /id="water-reminder-yes"/);
+  assert.match(settingsHtml, /id="water-reminder-no"/);
+});
+
+test('water reminder setting saves the requested interval and displays confirmation', async () => {
+  const harness = createSettingsHarness({ tracked_websites: [] });
+  harness.elements['water-reminder-interval'].value = '30';
+  await harness.listeners.waterReminder({ preventDefault() {} });
+
+  assert.equal(harness.elements['water-reminder-status'].textContent,
+    'Water reminder saved. ARAVI will remind you every 30 minutes.');
+  assert.equal(harness.elements['water-reminder-dialog'].hidden, true);
 });
 
 test('sidebar navigation opens one matching page at a time', async () => {

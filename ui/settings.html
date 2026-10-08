@@ -159,6 +159,38 @@
             </div>
           </div>
 
+          <form id="water-reminder-form" class="water-reminder-settings">
+            <div class="water-reminder-copy">
+              <span class="water-reminder-icon" aria-hidden="true">💧</span>
+              <div>
+                <strong>Water reminder</strong>
+                <small>Choose how often ARAVI reminds you to drink water.</small>
+              </div>
+            </div>
+            <div class="water-reminder-control">
+              <label class="visually-hidden" for="water-reminder-interval">Reminder interval in minutes</label>
+              <div class="water-reminder-input">
+                <input id="water-reminder-interval" name="water-reminder-interval" type="number" min="1" max="300" value="60" required>
+                <span>min</span>
+              </div>
+              <button class="primary-btn" type="submit">Save reminder</button>
+            </div>
+            <p id="water-reminder-status" class="water-reminder-status" role="status" aria-live="polite"></p>
+          </form>
+
+          <div id="water-reminder-dialog" class="water-reminder-dialog" role="dialog" aria-modal="true" aria-labelledby="water-reminder-title" hidden>
+            <section class="water-reminder-card">
+              <img src="../assets/charater/Untitled%20design%20(3).gif" alt="ARAVI reminding you to drink water">
+              <h2 id="water-reminder-title">தண்ணீர் குடிக்கும் நேரம்!<br>Time to drink water</h2>
+              <p>தண்ணீர் குடித்தீர்களா? Have you had some water?</p>
+              <div class="water-reminder-actions">
+                <button class="primary-btn" id="water-reminder-yes" type="button">ஆம் / Yes</button>
+                <button class="secondary-btn" id="water-reminder-no" type="button">இல்லை / No</button>
+              </div>
+              <p id="water-reminder-response-status" role="status" aria-live="polite"></p>
+            </section>
+          </div>
+
           <form id="limits-form">
             <div class="limit-cards">
               <article class="limit-site-card">
@@ -191,6 +223,7 @@
               <button class="primary-btn" type="submit">Save limits</button>
             </div>
           </form>
+
         </section>
       </section>
 

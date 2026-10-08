@@ -80,6 +80,10 @@ def main():
         if api_bridge:
             api_bridge.update_website_warning(domain, seconds_remaining)
 
+    def on_water_reminder():
+        if api_bridge:
+            api_bridge.show_water_reminder()
+
     last_folder_title = None
 
     def on_folder_state(folder_title):
@@ -115,7 +119,10 @@ def main():
         on_active_app_callback=on_active_app_state,
         is_active_app_observation_enabled=is_app_observation_enabled
     )
-    reminder_manager = ReminderManager(config_manager)
+    reminder_manager = ReminderManager(
+        config_manager,
+        on_water_reminder_callback=on_water_reminder
+    )
 
     def open_settings_window():
         global settings_window

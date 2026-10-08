@@ -119,6 +119,99 @@ class ApiBridge:
             logger.error(f"Error in ApiBridge.get_config: {e}", exc_info=True)
             return {}
 
+    def get_focus_mode(self) -> Dict[str, Any]:
+        try:
+            return self._config_manager.get("focus_mode", {})
+        except Exception as e:
+            logger.error(f"Error in ApiBridge.get_focus_mode: {e}", exc_info=True)
+            return {}
+
+    def set_focus_mode(self, enabled: bool, work_minutes: int = 25, blocked_websites: List[str] = None) -> Dict[str, Any]:
+        if isinstance(enabled, bool) is False:
+            raise ValueError("Focus mode enabled must be a boolean")
+        
+        if isinstance(work_minutes, int) is False or not 1 <= work_minutes <= 120:
+            raise ValueError("Work minutes must be an integer between 1 and 120")
+        
+        original_config = self._config_manager.config
+        updated_config = dict(original_config)
+        updated_config["focus_mode"] = {
+            "enabled": enabled,
+            "work_minutes": work_minutes,
+            "blocked_websites": blocked_websites or ["youtube.com", "instagram.com"],
+            "auto_pause_mascot": True
+        }
+        if not self.save_config(updated_config):
+            self._config_manager.config = original_config
+            raise OSError("ARAVI could not save the focus mode settings.")
+        return self.get_focus_mode()
+
+    def add_ai_model(self, name: str, api_type: str, config: Dict[str, Any]) -> Dict[str, Any]:
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("AI model name must be a non-empty string")
+        
+        if api_type not in ("gemini", "local", "opencode"):
+            raise ValueError("AI model type must be one of: gemini, local, opencode")
+        
+        original_config = self._config_manager.config
+        updated_config = dict(original_config)
+        
+        # Initialize ai_models list if not exists
+        if "ai_models" not in updated_config:
+            updated_config["ai_models"] = []
+        
+        # Check if model already exists
+        models = updated_config.get("ai_models", [])
+        for model in models:
+            if model.get("name") == name:
+                raise ValueError(f"AI model '{name}' already exists.")
+        
+        new_model = {
+            "name": name,
+            "api_type": api_type,
+            "config": config
+        }
+        models.append(new_model)
+        updated_config["ai_models"] = models
+        
+        if not self.save_config(updated_config):
+            self._config_manager.config = original_config
+            raise OSError("ARAVI could not save the AI model configuration.")
+        
+        return {"name": name, "api_type": api_type, "status": "added"}
+
+    def remove_ai_model(self, name: str) -> Dict[str, Any]:
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("AI model name must be a non-empty string")
+        
+        original_config = self._config_manager.config
+        updated_config = dict(original_config)
+        
+        models = updated_config.get("ai_models", [])
+        models = [m for m in models if m.get("name") != name]
+        updated_config["ai_models"] = models
+        
+        if not self.save_config(updated_config):
+            self._config_manager.config = original_config
+            raise OSError("ARAVI could not remove the AI model configuration.")
+        
+        return {"name": name, "status": "removed"}
+
+    def list_ai_models(self) -> List[Dict[str, Any]]:
+        try:
+            return self._config_manager.get("ai_models", [])
+        except Exception as e:
+            logger.error(f"Error listing AI models: {e}", exc_info=True)
+            return []
+
+    def set_config(self, config_dict: Dict[str, Any]) -> bool:
+        try:
+            self._config_manager.config = config_dict
+            return self._config_manager.save_config()
+        except Exception as e:
+            logger.error(f"Error in ApiBridge.set_config: {e}", exc_info=True)
+            return False
+
     def get_window_observation_status(self) -> bool:
         with self._observation_lock:
             return self._window_observation_active
@@ -326,6 +419,56 @@ class ApiBridge:
             self._config_manager.config = original_config
             raise OSError("ARAVI could not save the website limit.")
         return {"domain": domain, "limit_minutes": minutes}
+
+    def get_water_reminder_status(self) -> Dict[str, Any]:
+        return {
+            "interval_minutes": self._config_manager.get("water_reminder_interval_minutes", 60),
+            "pending": bool(self._config_manager.get("water_reminder_pending", False)),
+        }
+
+    def set_water_reminder_interval(self, minutes: int) -> Dict[str, Any]:
+        if isinstance(minutes, bool) or not isinstance(minutes, int) or not 1 <= minutes <= 300:
+            raise ValueError("The water reminder interval must be a whole number between 1 and 300 minutes.")
+
+        original_config = self._config_manager.config
+        updated_config = dict(original_config)
+        updated_config.update({
+            "water_reminder_interval_minutes": minutes,
+            "water_reminder_next_at": time.time() + minutes * 60,
+            "water_reminder_pending": False,
+        })
+        if not self.save_config(updated_config):
+            self._config_manager.config = original_config
+            raise OSError("ARAVI could not save the water reminder interval.")
+        return self.get_water_reminder_status()
+
+    def respond_to_water_reminder(self, answer: str) -> Dict[str, Any]:
+        if answer not in ("yes", "no"):
+            raise ValueError("Choose yes or no to respond to the water reminder.")
+        if not self._config_manager.get("water_reminder_pending", False):
+            raise ValueError("There is no water reminder waiting for a response.")
+
+        interval = self._config_manager.get("water_reminder_interval_minutes", 60)
+        next_interval = interval if answer == "yes" else 10
+        original_config = self._config_manager.config
+        updated_config = dict(original_config)
+        updated_config.update({
+            "water_reminder_pending": False,
+            "water_reminder_next_at": time.time() + next_interval * 60,
+        })
+        if not self.save_config(updated_config):
+            self._config_manager.config = original_config
+            raise OSError("ARAVI could not save your water reminder response.")
+        return {"next_reminder_minutes": next_interval}
+
+    def show_water_reminder(self):
+        if not self._settings_window_func:
+            logger.error("Could not show water reminder because the Control Center is unavailable.")
+            return
+        try:
+            self._settings_window_func()
+        except Exception as error:
+            logger.error("Could not open the Website Limits page for a water reminder: %s", error, exc_info=True)
 
     def get_chat_status(self) -> Dict[str, bool]:
         return {"gemini_configured": gemini_chat.is_configured()}

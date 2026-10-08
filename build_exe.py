@@ -8,7 +8,9 @@ def build():
     add_data_sep = ";" if sys.platform.startswith("win") else ":"
 
     cmd = [
-        "pyinstaller",
+        sys.executable,
+        "-m",
+        "PyInstaller",
         "--noconfirm",
         "--onedir",  # or --onefile
         "--windowed",
@@ -21,7 +23,7 @@ def build():
     print("Running command:", " ".join(cmd))
     res = subprocess.run(cmd)
     if res.returncode == 0:
-        print("\n✅ Build succeeded! Executable generated in 'dist/ARAVI-ASSISTANT/ARAVI-ASSISTANT.exe'")
+        print("\nBuild succeeded! Executable generated in 'dist/ARAVI-ASSISTANT/ARAVI-ASSISTANT.exe'")
     else:
         print("\n❌ Build failed. Make sure pyinstaller is installed ('pip install pyinstaller').")
 

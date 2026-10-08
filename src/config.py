@@ -19,9 +19,18 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         {"id": 1, "text": "Drink Water", "interval_minutes": 60, "enabled": True},
         {"id": 2, "text": "Stretch and relax eyes", "interval_minutes": 45, "enabled": True}
     ],
+    "water_reminder_interval_minutes": 60,
+    "water_reminder_next_at": 0,
+    "water_reminder_pending": False,
     "pomodoro": {
         "work_minutes": 25,
         "break_minutes": 5
+    },
+    "focus_mode": {
+        "enabled": False,
+        "work_minutes": 25,
+        "blocked_websites": ["youtube.com", "instagram.com"],
+        "auto_pause_mascot": True
     }
 }
 

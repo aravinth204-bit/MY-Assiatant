@@ -12,9 +12,13 @@ let localHistory = [];
 let webSearchHistory = [];
 let opencodeHistory = [];
 let activityRefreshTimer = null;
+let waterReminderPendingShown = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('limits-form').addEventListener('submit', saveLimits);
+  document.getElementById('water-reminder-form').addEventListener('submit', saveWaterReminderInterval);
+  document.getElementById('water-reminder-yes').addEventListener('click', () => respondToWaterReminder('yes'));
+  document.getElementById('water-reminder-no').addEventListener('click', () => respondToWaterReminder('no'));
   document.getElementById('file-search-form').addEventListener('submit', searchFiles);
   document.getElementById('chat-form').addEventListener('submit', handleChatMessage);
   document.getElementById('chat-agent').addEventListener('change', updateChatAgentBadge);
@@ -29,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
   showPage(window.location.hash.slice(1) || 'dashboard-panel');
   updateChatAgentBadge();
   loadLimits();
+  refreshWaterReminderStatus();
+  setInterval(refreshWaterReminderStatus, 5000);
   loadObservationStatus();
   loadActivityHistory();
   loadDashboardHistory();
@@ -694,5 +700,72 @@ async function saveLimits(event) {
     if (saved) await recordDashboardActivity('website_limits');
   } catch (error) {
     status.textContent = `Could not save limits: ${error.message || error}`;
+  }
+}
+
+async function refreshWaterReminderStatus() {
+  if (!window.pywebview || !window.pywebview.api) return;
+
+  try {
+    const status = await window.pywebview.api.get_water_reminder_status();
+    const intervalInput = document.getElementById('water-reminder-interval');
+    if (document.activeElement !== intervalInput) {
+      intervalInput.value = status.interval_minutes;
+    }
+    if (status.pending && !waterReminderPendingShown) {
+      waterReminderPendingShown = true;
+      showPage('limits-panel');
+      document.getElementById('water-reminder-response-status').textContent = '';
+      document.getElementById('water-reminder-dialog').hidden = false;
+    } else if (!status.pending) {
+      waterReminderPendingShown = false;
+      document.getElementById('water-reminder-dialog').hidden = true;
+    }
+  } catch (error) {
+    document.getElementById('water-reminder-status').textContent =
+      `Could not load water reminder settings: ${error.message || error}`;
+  }
+}
+
+async function saveWaterReminderInterval(event) {
+  event.preventDefault();
+  const status = document.getElementById('water-reminder-status');
+  const interval = Number(document.getElementById('water-reminder-interval').value);
+  status.textContent = '';
+
+  try {
+    await window.pywebview.api.set_water_reminder_interval(interval);
+    waterReminderPendingShown = false;
+    document.getElementById('water-reminder-dialog').hidden = true;
+    status.textContent = `Water reminder saved. ARAVI will remind you every ${interval} minutes.`;
+  } catch (error) {
+    status.textContent = `Could not save water reminder: ${error.message || error}`;
+  }
+}
+
+async function respondToWaterReminder(answer) {
+  const buttons = [
+    document.getElementById('water-reminder-yes'),
+    document.getElementById('water-reminder-no')
+  ];
+  const responseStatus = document.getElementById('water-reminder-response-status');
+  buttons.forEach(button => {
+    button.disabled = true;
+  });
+  responseStatus.textContent = '';
+
+  try {
+    const result = await window.pywebview.api.respond_to_water_reminder(answer);
+    waterReminderPendingShown = false;
+    document.getElementById('water-reminder-dialog').hidden = true;
+    document.getElementById('water-reminder-status').textContent = answer === 'yes'
+      ? `Great! The next reminder is in ${result.next_reminder_minutes} minutes.`
+      : `Okay, ARAVI will remind you again in ${result.next_reminder_minutes} minutes.`;
+  } catch (error) {
+    responseStatus.textContent = `Could not save your response: ${error.message || error}`;
+  } finally {
+    buttons.forEach(button => {
+      button.disabled = false;
+    });
   }
 }

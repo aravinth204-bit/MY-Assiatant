@@ -1,6 +1,7 @@
 import time
 import threading
-from typing import Optional
+import json
+from typing import Optional, Dict, Any
 from src.logger import get_logger
 
 logger = get_logger("mascot_roamer")
@@ -10,6 +11,12 @@ try:
     HAS_WIN32 = True
 except ImportError:
     HAS_WIN32 = False
+
+try:
+    import winsound
+    HAS_WINSOUND = True
+except ImportError:
+    HAS_WINSOUND = False
 
 class MascotRoamer:
     def __init__(self, api_bridge):
@@ -28,6 +35,20 @@ class MascotRoamer:
         # Mascot window dimensions
         self.win_w = 280
         self.win_h = 200
+        
+        # Enhanced mascot settings
+        self.personality = "normal"  # normal, friendly, playful, professional
+        self.voice_enabled = False
+        self.animation_states = {
+            "walk_right": "walk_right",
+            "walk_left": "walk_left", 
+            "climb_up": "climb_up",
+            "climb_down": "climb_down",
+            "ceiling_walk": "ceiling_walk",
+            "landing": "landing",
+            "celebrate": "celebrate",
+            "idle": "idle"
+        }
 
     def update_screen_metrics(self):
         if HAS_WIN32:

@@ -97,6 +97,61 @@ class SystemMonitorTests(unittest.TestCase):
             with self.subTest(threshold=threshold), self.assertRaises(ValueError):
                 system_monitor_module.SystemMonitor(storage_threshold_pct=threshold)
 
+class WaterReminderManagerTests(unittest.TestCase):
+    def test_reminder_fires_once_when_interval_is_due_and_stays_pending(self):
+        class Config:
+            def __init__(self):
+                self.config = {
+                    "water_reminder_interval_minutes": 30,
+                    "water_reminder_next_at": 200,
+                    "water_reminder_pending": False,
+                }
+
+            def get(self, key, default=None):
+                return self.config.get(key, default)
+
+            def save_config(self):
+                return True
+
+        config = Config()
+        calls = []
+        manager = reminders_module.ReminderManager(
+            config,
+            on_water_reminder_callback=lambda: calls.append("shown"),
+        )
+
+        manager._check_water_reminder(199)
+        self.assertEqual(calls, [])
+        manager._check_water_reminder(200)
+        manager._check_water_reminder(215)
+
+        self.assertEqual(calls, ["shown"])
+        self.assertTrue(config.config["water_reminder_pending"])
+        self.assertEqual(config.config["water_reminder_next_at"], 0)
+
+    def test_new_reminder_schedule_starts_after_configured_interval(self):
+        class Config:
+            def __init__(self):
+                self.config = {
+                    "water_reminder_interval_minutes": 30,
+                    "water_reminder_next_at": 0,
+                    "water_reminder_pending": False,
+                }
+
+            def get(self, key, default=None):
+                return self.config.get(key, default)
+
+            def save_config(self):
+                return True
+
+        config = Config()
+        manager = reminders_module.ReminderManager(config)
+
+        manager._check_water_reminder(100)
+
+        self.assertEqual(config.config["water_reminder_next_at"], 1900)
+        self.assertFalse(config.config["water_reminder_pending"])
+
 
 class FakeClock:
     def __init__(self, now=0):
@@ -354,6 +409,69 @@ class ScreenObservationTests(unittest.TestCase):
             bridge.set_website_limit("youtube.com", 1)
 
         self.assertIs(config.config, original_config)
+
+    def test_water_reminder_interval_is_saved_and_resets_pending_schedule(self):
+        config = types.SimpleNamespace(
+            config={
+                "water_reminder_interval_minutes": 60,
+                "water_reminder_next_at": 10,
+                "water_reminder_pending": True,
+            },
+            save_config=lambda: True,
+        )
+        config.get = lambda key, default=None: config.config.get(key, default)
+        bridge = api_bridge_module.ApiBridge(None, None, None, None, config)
+
+        with patch.object(api_bridge_module.time, "time", return_value=1000):
+            result = bridge.set_water_reminder_interval(30)
+
+        self.assertEqual(result, {"interval_minutes": 30, "pending": False})
+        self.assertEqual(config.config["water_reminder_next_at"], 2800)
+
+    def test_water_reminder_response_uses_interval_or_ten_minute_snooze(self):
+        config = types.SimpleNamespace(
+            config={
+                "water_reminder_interval_minutes": 30,
+                "water_reminder_next_at": 0,
+                "water_reminder_pending": True,
+            },
+            save_config=lambda: True,
+        )
+        config.get = lambda key, default=None: config.config.get(key, default)
+        bridge = api_bridge_module.ApiBridge(None, None, None, None, config)
+
+        with patch.object(api_bridge_module.time, "time", return_value=1000):
+            self.assertEqual(
+                bridge.respond_to_water_reminder("no"),
+                {"next_reminder_minutes": 10},
+            )
+        self.assertEqual(config.config["water_reminder_next_at"], 1600)
+
+        config.config["water_reminder_pending"] = True
+        with patch.object(api_bridge_module.time, "time", return_value=2000):
+            self.assertEqual(
+                bridge.respond_to_water_reminder("yes"),
+                {"next_reminder_minutes": 30},
+            )
+        self.assertEqual(config.config["water_reminder_next_at"], 3800)
+
+    def test_water_reminder_rejects_invalid_interval_or_response(self):
+        config = types.SimpleNamespace(
+            config={
+                "water_reminder_interval_minutes": 30,
+                "water_reminder_next_at": 0,
+                "water_reminder_pending": False,
+            },
+            save_config=lambda: True,
+        )
+        config.get = lambda key, default=None: config.config.get(key, default)
+        bridge = api_bridge_module.ApiBridge(None, None, None, None, config)
+
+        for interval in (0, 301, True):
+            with self.subTest(interval=interval), self.assertRaises(ValueError):
+                bridge.set_water_reminder_interval(interval)
+        with self.assertRaises(ValueError):
+            bridge.respond_to_water_reminder("yes")
 
     def test_file_search_runs_in_background_and_exposes_its_status(self):
         bridge = api_bridge_module.ApiBridge(None, None, None, None, None)
