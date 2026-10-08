@@ -7,6 +7,74 @@ CONFIG_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "con
 DEFAULT_CONFIG: Dict[str, Any] = {
     "character_name": "Aravi",
     "storage_threshold_pct": 90,
+    "mascot_style": "default",
+    "voice_enabled": False,
+    "voice_language": "en-IN",
+    "personality": "friendly",
+    "analytics": {
+        "weekly_reports": True,
+        "monthly_summaries": True,
+        "productivity_tracking": True,
+        "resource_monitoring": True,
+        "export_history_days": 30
+    },
+    "mascot_styles": {
+        "default": {
+            "name": "ARAVI Default",
+            "description": "Classic ARAVI mascot",
+            "colors": {
+                "primary": "#14b8a6",
+                "secondary": "#f43f5e"
+            }
+        },
+        "neon": {
+            "name": "Neon Mode",
+            "description": "Glowing neon-style mascot",
+            "colors": {
+                "primary": "#00ffea",
+                "secondary": "#ff00ff"
+            }
+        },
+        "cyber": {
+            "name": "Cyberpunk",
+            "description": "Dark cyberpunk aesthetic",
+            "colors": {
+                "primary": "#ff2d95",
+                "secondary": "#1de9bc"
+            }
+        },
+        "cute": {
+            "name": "Cute Mode",
+            "description": "Soft and rounded cute style",
+            "colors": {
+                "primary": "#ff6b6b",
+                "secondary": "#5f27cd"
+            }
+        }
+    },
+    "voice_enabled": False,
+    "voice_language": "en-IN",
+    "personality": "friendly",
+    "personality_settings": {
+        "friendly": {
+            "greeting": "Hi there! How can I help you today?",
+            "formal_prefix": "",
+            "casual_suffix": "!",
+            "emoji": "👋"
+        },
+        "professional": {
+            "greeting": "Good day. How may I assist you?",
+            "formal_prefix": "",
+            "casual_suffix": ".",
+            "emoji": "🤖"
+        },
+        "funny": {
+            "greeting": "Hello! I promise I'm more useful than I look!",
+            "formal_prefix": "",
+            "casual_suffix": "! 😄",
+            "emoji": "😄"
+        }
+    },
     "start_with_windows": False,
     "protected_folders": [],
     "tracked_websites": [

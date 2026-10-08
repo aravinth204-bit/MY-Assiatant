@@ -28,7 +28,17 @@ function createSettingsHarness(config, fileSearch = async () => ({
   let nextIntervalId = 0;
   let fileSearchIntervalId = null;
   const pageClickListeners = {};
-  const pageLinks = ['dashboard-panel', 'chat-panel', 'file-panel', 'limits-panel', 'activity-panel']
+  const pageLinks = [
+    'dashboard-panel',
+    'chat-panel',
+    'mascot-panel',
+    'voice-panel',
+    'personality-panel',
+    'analytics-panel',
+    'file-panel',
+    'limits-panel',
+    'activity-panel'
+  ]
     .map(page => ({
       dataset: { page },
       classList: {
@@ -117,6 +127,26 @@ function createSettingsHarness(config, fileSearch = async () => ({
     'chat-agent-badge': { textContent: '' },
     'chat-title': { textContent: '' },
     'chat-send': { disabled: false },
+    'mascot-status': { textContent: '' },
+    'voice-status': { textContent: '' },
+    'voice-enabled': {
+      checked: false,
+      addEventListener: (event, handler) => {
+        listeners.voiceEnabledChange = handler;
+      }
+    },
+    'voice-language': {
+      value: 'en-IN',
+      addEventListener: (event, handler) => {
+        listeners.voiceLanguageChange = handler;
+      }
+    },
+    'personality-status': { textContent: '' },
+    'weekly-status': { innerHTML: '' },
+    'monthly-status': { innerHTML: '' },
+    'productivity-status': { innerHTML: '' },
+    'resource-status': { innerHTML: '' },
+    'analytics-status': { textContent: '' },
     'chat-messages': {
       children: [],
       scrollTop: 0,
@@ -364,6 +394,12 @@ test('sidebar navigation opens one matching page at a time', async () => {
   harness.pageClickListeners['limits-panel']();
   assert.equal(harness.pagePanels.find(panel => panel.id === 'limits-panel').hidden, false);
   assert.equal(harness.pagePanels.filter(panel => !panel.hidden).length, 1);
+
+  for (const page of ['mascot-panel', 'voice-panel', 'personality-panel', 'analytics-panel']) {
+    harness.pageClickListeners[page]();
+    assert.equal(harness.pagePanels.find(panel => panel.id === page).hidden, false);
+    assert.equal(harness.pagePanels.filter(panel => !panel.hidden).length, 1);
+  }
 });
 
 test('dashboard and activity monitor render persisted app usage history', async () => {

@@ -20,6 +20,10 @@
       <nav class="nav-menu" aria-label="Dashboard sections">
         <a class="nav-btn active" href="#dashboard-panel" data-page="dashboard-panel"><span aria-hidden="true">▦</span>Dashboard</a>
         <a class="nav-btn" href="#chat-panel" data-page="chat-panel"><span aria-hidden="true">▤</span>AI Chat</a>
+        <a class="nav-btn" href="#mascot-panel" data-page="mascot-panel"><span aria-hidden="true">🎨</span>Mascot</a>
+        <a class="nav-btn" href="#voice-panel" data-page="voice-panel"><span aria-hidden="true">🔊</span>Voice</a>
+        <a class="nav-btn" href="#personality-panel" data-page="personality-panel"><span aria-hidden="true">👤</span>Personality</a>
+        <a class="nav-btn" href="#analytics-panel" data-page="analytics-panel"><span aria-hidden="true">📊</span>Analytics</a>
         <a class="nav-btn" href="#file-panel" data-page="file-panel"><span aria-hidden="true">⌕</span>File Search</a>
         <a class="nav-btn" href="#limits-panel" data-page="limits-panel"><span aria-hidden="true">◷</span>Website Limits</a>
         <a class="nav-btn" href="#activity-panel" data-page="activity-panel"><span aria-hidden="true">⌁</span>Activity Monitor</a>
@@ -149,15 +153,150 @@
           </section>
       </section>
 
-      <section class="dashboard-content page-panel" id="limits-panel" hidden>
-        <section class="section-card limits-card" id="limits-title" aria-labelledby="limits-heading">
+      <section class="dashboard-content page-panel" id="mascot-panel" hidden>
+        <section class="section-card limits-card" aria-labelledby="mascot-heading">
           <div class="card-heading">
-            <span class="section-icon" aria-hidden="true">◷</span>
+            <span class="section-icon" aria-hidden="true">🎨</span>
             <div>
-              <h2 id="limits-heading">Website Limits</h2>
-              <p>Control your daily time on YouTube and Instagram.</p>
+              <h2 id="mascot-heading">Mascot Style</h2>
+              <p>Choose your preferred ARAVI mascot design.</p>
             </div>
           </div>
+          <div class="mascot-styles-grid">
+            <div class="mascot-style-card" data-style="default" style="border: 2px solid var(--teal-primary);">
+              <div class="mascot-preview" style="width: 80px; height: 80px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #14b8a6; border-radius: 12px; margin: 10px auto;">
+                <img src="assets/character-frames/ezgif-frame-040.png" alt="Default" style="width: 100%; height: 100%; object-fit: contain; transform: scale(0.9);">
+              </div>
+              <div class="style-name" style="color: #14b8a6; font-weight: 600;">Default</div>
+              <div class="style-desc" style="color: #94a3b8; font-size: 11px; text-align: center;">Classic ARAVI</div>
+            </div>
+            <div class="mascot-style-card" data-style="neon" style="border: 2px solid #ff00ff;">
+              <div class="mascot-preview" style="width: 80px; height: 80px; background: linear-gradient(135deg, #0a0a2e, #1a0a4e); border: 2px solid #00ffea; border-radius: 12px; margin: 10px auto;">
+                <img src="assets/character-frames/ezgif-frame-040.png" alt="Neon" style="width: 100%; height: 100%; object-fit: contain; transform: scale(0.9); filter: drop-shadow(0 0 10px #00ffea);">
+              </div>
+              <div class="style-name" style="color: #00ffea; font-weight: 600;">Neon</div>
+              <div class="style-desc" style="color: #94a3b8; font-size: 11px; text-align: center;">Glowing neon style</div>
+            </div>
+            <div class="mascot-style-card" data-style="cyber" style="border: 2px solid #ff2d95;">
+              <div class="mascot-preview" style="width: 80px; height: 80px; background: linear-gradient(135deg, #050511, #0f0f23); border: 2px solid #ff2d95; border-radius: 12px; margin: 10px auto;">
+                <img src="assets/character-frames/ezgif-frame-040.png" alt="Cyber" style="width: 100%; height: 100%; object-fit: contain; transform: scale(0.9); filter: drop-shadow(0 0 10px #ff2d95);">
+              </div>
+              <div class="style-name" style="color: #ff2d95; font-weight: 600;">Cyberpunk</div>
+              <div class="style-desc" style="color: #94a3b8; font-size: 11px; text-align: center;">Dark cyber aesthetic</div>
+            </div>
+            <div class="mascot-style-card" data-style="cute" style="border: 2px solid #5f27cd;">
+              <div class="mascot-preview" style="width: 80px; height: 80px; background: linear-gradient(135deg, #fafadc, #f0e68c); border: 2px solid #ff6b6b; border-radius: 12px; margin: 10px auto;">
+                <img src="assets/character-frames/ezgif-frame-040.png" alt="Cute" style="width: 100%; height: 100%; object-fit: contain; transform: scale(0.9); filter: brightness(1.2);">
+              </div>
+              <div class="style-name" style="color: #ff6b6b; font-weight: 600;">Cute</div>
+              <div class="style-desc" style="color: #94a3b8; font-size: 11px; text-align: center;">Soft and rounded</div>
+            </div>
+          </div>
+          <p id="mascot-status" class="water-reminder-status" role="status" aria-live="polite"></p>
+        </section>
+      </section>
+
+      <section class="dashboard-content page-panel" id="voice-panel" hidden>
+        <section class="section-card limits-card" aria-labelledby="voice-heading">
+          <div class="card-heading">
+            <span class="section-icon" aria-hidden="true">🔊</span>
+            <div>
+              <h2 id="voice-heading">Voice Responses</h2>
+              <p>ARAVI can speak your responses using Text-to-Speech.</p>
+            </div>
+          </div>
+          <div class="voice-control">
+            <label class="setting-item">
+              <input type="checkbox" id="voice-enabled" class="std-input">
+              <span>Enable voice responses</span>
+            </label>
+            <label class="setting-item">
+              <select id="voice-language" class="chat-agent-select">
+                <option value="en-IN">English (India)</option>
+                <option value="en-US">English (US)</option>
+                <option value="ta-IN">Tamil</option>
+                <option value="hi-IN">Hindi</option>
+              </select>
+              <span>Language</span>
+            </label>
+          </div>
+          <p id="voice-status" class="water-reminder-status" role="status" aria-live="polite"></p>
+          <p class="privacy-note" style="margin-top: 10px; font-size: 10px;">
+            Voice uses browser's native SpeechSynthesis - no data leaves your device.
+          </p>
+        </section>
+      </section>
+
+      <section class="dashboard-content page-panel" id="personality-panel" hidden>
+        <section class="section-card limits-card" aria-labelledby="personality-heading">
+          <div class="card-heading">
+            <span class="section-icon" aria-hidden="true">👤</span>
+            <div>
+              <h2 id="personality-heading">Personality</h2>
+              <p>ARAVI's response style and temperament.</p>
+            </div>
+          </div>
+          <div class="personality-options">
+            <div class="personality-option" data-personality="friendly" style="border: 2px solid #14b8a6;">
+              <span class="personality-emoji" style="font-size: 20px;">👋</span>
+              <div>
+                <strong>Friendly</strong>
+                <small>Warm, approachable, casual</small>
+              </div>
+            </div>
+            <div class="personality-option" data-personality="professional" style="border: 2px solid #ff2d95;">
+              <span class="personality-emoji" style="font-size: 20px;">🤖</span>
+              <div>
+                <strong>Professional</strong>
+                <small>Formal, precise, business-like</small>
+              </div>
+            </div>
+            <div class="personality-option" data-personality="funny" style="border: 2px solid #5f27cd;">
+              <span class="personality-emoji" style="font-size: 20px;">😄</span>
+              <div>
+                <strong>Funny</strong>
+                <small>Humorous, light-hearted, playful</small>
+              </div>
+            </div>
+          </div>
+          <p id="personality-status" class="water-reminder-status" role="status" aria-live="polite"></p>
+        </section>
+      </section>
+
+      <section class="dashboard-content page-panel" id="analytics-panel" hidden>
+        <section class="section-card limits-card" aria-labelledby="analytics-heading">
+          <div class="card-heading">
+            <span class="section-icon" aria-hidden="true">📊</span>
+            <div>
+              <h2 id="analytics-heading">Analytics & Insights</h2>
+              <p>Weekly/monthly usage reports and productivity trends.</p>
+            </div>
+          </div>
+          <div class="analytics-content">
+            <div class="analytics-section" id="weekly-report">
+              <h3>This Week's Activity</h3>
+              <p id="weekly-status">Loading weekly report...</p>
+            </div>
+            <div class="analytics-section" id="monthly-summary">
+              <h3>Monthly Summary</h3>
+              <p id="monthly-status">Loading monthly summary...</p>
+            </div>
+            <div class="analytics-section" id="productivity-trends">
+              <h3>Productivity Trends</h3>
+              <p id="productivity-status">Loading trends...</p>
+            </div>
+            <div class="analytics-section" id="resource-usage">
+              <h3>Resource Usage Patterns</h3>
+              <p id="resource-status">Loading resource data...</p>
+            </div>
+            <div style="margin-top: 20px;">
+              <button class="primary-btn" onclick="exportAnalyticsReport()">Export Report</button>
+              <span style="margin-left: 10px; color: var(--text-muted); font-size: 11px;">CSV format | Includes app usage, website limits, chat activity</span>
+            </div>
+            <p id="analytics-status" class="water-reminder-status" role="status" aria-live="polite"></p>
+          </div>
+        </section>
+      </section>
 
           <form id="water-reminder-form" class="water-reminder-settings">
             <div class="water-reminder-copy">

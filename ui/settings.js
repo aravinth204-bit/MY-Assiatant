@@ -38,6 +38,43 @@ document.addEventListener('DOMContentLoaded', () => {
   loadObservationStatus();
   loadActivityHistory();
   loadDashboardHistory();
+
+  // **NEW: Initialize mascot styles from config**
+  initMascotStylesFromConfig();
+
+  // **NEW: Initialize voice from config**
+  initVoiceFromConfig();
+
+  // **NEW: Initialize personality from config**
+  initPersonalityFromConfig();
+
+  // **NEW: Mascot style selection**
+  document.querySelectorAll('.mascot-style-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const style = card.dataset.style;
+      selectMascotStyle(style);
+    });
+  });
+
+  // **NEW: Voice enabled toggle**
+  document.getElementById('voice-enabled').addEventListener('change', () => {
+    const enabled = document.getElementById('voice-enabled').checked;
+    toggleVoice(enabled);
+  });
+
+  // **NEW: Voice language select**
+  document.getElementById('voice-language').addEventListener('change', () => {
+    const language = document.getElementById('voice-language').value;
+    setVoiceLanguage(language);
+  });
+
+  // **NEW: Personality selection**
+  document.querySelectorAll('.personality-option').forEach(option => {
+    option.addEventListener('click', () => {
+      const personality = option.dataset.personality;
+      selectPersonality(personality);
+    });
+  });
 });
 
 function showPage(pageId) {
@@ -55,6 +92,7 @@ function showPage(pageId) {
     loadActivityHistory();
   }
   if (pageId === 'dashboard-panel') loadDashboardHistory();
+  if (pageId === 'analytics-panel') loadAnalyticsReports();
 }
 
 async function searchFiles(event, onComplete = null) {
@@ -768,4 +806,340 @@ async function respondToWaterReminder(answer) {
       button.disabled = false;
     });
   }
+}
+
+// **NEW: Initialize mascot styles from config**
+async function initMascotStylesFromConfig() {
+  if (!window.pywebview || !window.pywebview.api) return;
+  try {
+    const config = await window.pywebview.api.get_config();
+    const style = config.mascot_style || 'default';
+    const styles = config.mascot_styles || {};
+    const styleName = styles[style] ? styles[style].name : 'Default';
+    document.getElementById('mascot-status').textContent = `Mascot style: ${styleName}`;
+    // Apply the style
+    if (window.applyMascotStyle) {
+      window.applyMascotStyle(styles[style] || { name: styleName, colors: { primary: '#14b8a6', secondary: '#f43f5e' } });
+    }
+    // Highlight selected style card
+    document.querySelectorAll('.mascot-style-card').forEach(card => {
+      card.classList.toggle('selected', card.dataset.style === style);
+    });
+  } catch (error) {
+    document.getElementById('mascot-status').textContent = 'Could not load mascot style.';
+    console.log('Error loading mascot style:', error);
+  }
+}
+
+// **NEW: Initialize voice from config**
+async function initVoiceFromConfig() {
+  if (!window.pywebview || !window.pywebview.api) return;
+  try {
+    const config = await window.pywebview.api.get_config();
+    const voiceEnabled = config.voice_enabled !== false; // default true
+    const voiceLanguage = config.voice_language || 'en-IN';
+    document.getElementById('voice-enabled').checked = voiceEnabled;
+    document.getElementById('voice-language').value = voiceLanguage;
+    toggleVoice(voiceEnabled);
+    setVoiceLanguage(voiceLanguage);
+    document.getElementById('voice-status').textContent = voiceEnabled ? 'Voice enabled' : 'Voice disabled';
+  } catch (error) {
+    document.getElementById('voice-status').textContent = 'Could not load voice settings.';
+    console.log('Error loading voice settings:', error);
+  }
+}
+
+// **NEW: Initialize personality from config**
+async function initPersonalityFromConfig() {
+  if (!window.pywebview || !window.pywebview.api) return;
+  try {
+    const config = await window.pywebview.api.get_config();
+    const pers = config.personality || 'friendly';
+    document.getElementById('personality-status').textContent = `Personality: ${pers}`;
+    selectPersonality(pers);
+    if (window.applyPersonality) {
+      window.applyPersonality();
+    }
+  } catch (error) {
+    document.getElementById('personality-status').textContent = 'Could not load personality settings.';
+    console.log('Error loading personality:', error);
+  }
+}
+
+// **NEW: Select mascot style**
+async function selectMascotStyle(style) {
+  if (!window.pywebview || !window.pywebview.api) return;
+  try {
+    const config = await window.pywebview.api.get_config();
+    const styles = config.mascot_styles || {};
+    const styleData = styles[style] || { name: style.charAt(0).toUpperCase() + style.slice(1), colors: { primary: '#14b8a6', secondary: '#f43f5e' } };
+
+    // Apply style
+    if (window.applyMascotStyle) {
+      window.applyMascotStyle(styleData);
+    }
+
+    // Save to config
+    config.mascot_style = style;
+    config.mascot_styles = styles;
+    const saved = await window.pywebview.api.save_config(config);
+
+    // Update status
+    document.getElementById('mascot-status').textContent = saved ? `Mascot style: ${styleData.name}` : 'Could not save mascot style.';
+
+    // Update selected class
+    document.querySelectorAll('.mascot-style-card').forEach(card => {
+      card.classList.toggle('selected', card.dataset.style === style);
+    });
+  } catch (error) {
+    document.getElementById('mascot-status').textContent = `Error: ${error.message || error}`;
+    console.log('Error selecting mascot style:', error);
+  }
+}
+
+// **NEW: Toggle voice**
+async function toggleVoice(enabled) {
+  if (!window.pywebview || !window.pywebview.api) return;
+  try {
+    const config = await window.pywebview.api.get_config();
+    config.voice_enabled = enabled;
+    config.voice_language = document.getElementById('voice-language').value;
+    const saved = await window.pywebview.api.save_config(config);
+
+    if (saved) {
+      // Update global vars
+      initVoice(enabled, config.voice_language);
+      document.getElementById('voice-status').textContent = enabled ? 'Voice enabled' : 'Voice disabled';
+    } else {
+      document.getElementById('voice-status').textContent = 'Could not save voice settings.';
+    }
+  } catch (error) {
+    document.getElementById('voice-status').textContent = `Error: ${error.message || error}`;
+    console.log('Error toggling voice:', error);
+  }
+}
+
+// **NEW: Set voice language**
+async function setVoiceLanguage(language) {
+  if (!window.pywebview || !window.pywebview.api) return;
+  try {
+    const config = await window.pywebview.api.get_config();
+    config.voice_language = language;
+    const saved = await window.pywebview.api.save_config(config);
+    if (saved) {
+      document.getElementById('voice-status').textContent = `Language: ${language}`;
+    }
+  } catch (error) {
+    console.log('Error setting voice language:', error);
+  }
+}
+
+// **NEW: Select personality**
+async function selectPersonality(pers) {
+  const validPersonalities = ['friendly', 'professional', 'funny'];
+  if (!validPersonalities.includes(pers)) pers = 'friendly';
+
+  personality = pers;
+
+  // Update CSS
+  if (window.applyPersonality) {
+    window.applyPersonality();
+  }
+
+  // Save to config
+  if (!window.pywebview || !window.pywebview.api) return;
+  try {
+    const config = await window.pywebview.api.get_config();
+    config.personality = pers;
+    const saved = await window.pywebview.api.save_config(config);
+
+    if (saved) {
+      document.getElementById('personality-status').textContent = `Personality: ${pers}`;
+
+      // Update selected class
+      document.querySelectorAll('.personality-option').forEach(option => {
+        option.classList.toggle('selected', option.dataset.personality === pers);
+      });
+    }
+  } catch (error) {
+    document.getElementById('personality-status').textContent = `Error: ${error.message || error}`;
+    console.log('Error selecting personality:', error);
+  }
+}
+
+// **NEW: Analytics & Insights**
+async function loadAnalyticsReports() {
+  if (!window.pywebview || !window.pywebview.api) return;
+  try {
+    const config = await window.pywebview.api.get_config();
+    const days = (config.analytics && config.analytics.export_history_days) || 30;
+
+    // Load app activity history
+    const history = await window.pywebview.api.get_app_activity_history();
+
+    // Generate weekly report
+    generateWeeklyReport(history, days);
+
+    // Generate monthly summary
+    generateMonthlySummary(history, days);
+
+    // Generate productivity trends
+    generateProductivityTrends(history, days);
+
+    // Generate resource usage patterns
+    await generateResourceUsage();
+  } catch (error) {
+    document.getElementById('weekly-status').textContent = `Error loading analytics: ${error.message || error}`;
+    console.log('Error loading analytics:', error);
+  }
+}
+
+function generateWeeklyReport(history, days) {
+  const weeklyStatus = document.getElementById('weekly-status');
+  if (!history || !history.length) {
+    weeklyStatus.innerHTML = 'No activity data for the past week.';
+    return;
+  }
+
+  // Calculate weekly stats (last 7 days)
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  const weeklyApps = history
+    .filter(entry => new Date(entry.date) >= sevenDaysAgo)
+    .reduce((acc, entry) => {
+      const app = entry.app || 'unknown';
+      acc[app] = (acc[app] || 0) + Number(entry.seconds || 0);
+      return acc;
+    }, {});
+
+  let html = `<strong>Total active this week:</strong> ${Object.values(weeklyApps).reduce((a, b) => a + b, 0) / 60 | 0} min<br>`;
+  html += `<strong>Most used apps:</strong><br>`;
+
+  const sortedApps = Object.entries(weeklyApps).sort((a, b) => b[1] - a[1]);
+  html += sortedApps.slice(0, 5).map(([app, seconds]) => `&nbsp;&nbsp;• ${app}: ${(seconds / 60 | 0)} min`).join('<br>');
+
+  weeklyStatus.innerHTML = html;
+}
+
+function generateMonthlySummary(history, days) {
+  const monthlyStatus = document.getElementById('monthly-status');
+  if (!history || !history.length) {
+    monthlyStatus.innerHTML = 'No activity data for the past month.';
+    return;
+  }
+
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+  const monthlyApps = history
+    .filter(entry => new Date(entry.date) >= thirtyDaysAgo)
+    .reduce((acc, entry) => {
+      const app = entry.app || 'unknown';
+      acc[app] = (acc[app] || 0) + Number(entry.seconds || 0);
+      return acc;
+    }, {});
+
+  let totalMinutes = Object.values(monthlyApps).reduce((a, b) => a + b, 0) / 60;
+
+  let html = `<strong>Total usage this month:</strong> ${totalMinutes | 0} min<br>`;
+  html += `<strong>Days monitored:</strong> ${history.filter(e => new Date(e.date) >= thirtyDaysAgo).length}<br>`;
+  html += `<strong>Top application:</strong> ${Object.keys(monthlyApps).reduce((a, b) => monthlyApps[a] > monthlyApps[b] ? a : b) || 'None'}`;
+
+  monthlyStatus.innerHTML = html;
+}
+
+function generateProductivityTrends(history, days) {
+  const productivityStatus = document.getElementById('productivity-status');
+  if (!history || !history.length) {
+    productivityStatus.innerHTML = 'No data for productivity trends.';
+    return;
+  }
+
+  // Group by date and calculate
+  const byDate = history.reduce((acc, entry) => {
+    const date = entry.date || 'unknown';
+    acc[date] = (acc[date] || 0) + (Number(entry.seconds) || 0);
+    return acc;
+  }, {});
+
+  let html = '<strong>Daily activity (last 7 days):</strong><br>';
+  const dates = Object.keys(byDate)
+    .sort((a, b) => new Date(b) - new Date(a))
+    .slice(0, 7);
+
+  dates.forEach(date => {
+    const seconds = byDate[date];
+    html += `&nbsp;&nbsp;${new Date(date).toLocaleDateString()}: ${(seconds / 60 | 0)} min<br>`;
+  });
+
+  productivityStatus.innerHTML = html;
+}
+
+async function generateResourceUsage() {
+  const resourceStatus = document.getElementById('resource-status');
+  if (!window.pywebview || !window.pywebview.api) {
+    resourceStatus.innerHTML = 'ARAVI not available for resource monitoring.';
+    return;
+  }
+
+  try {
+    const stats = window.pywebview.api.get_system_stats ?
+      await window.pywebview.api.get_system_stats() :
+      { cpu_percent: 0, ram_percent: 0, disk_percent: 0 };
+
+    let html = `
+      <strong>Current Resource Usage:</strong><br>
+      &nbsp;&nbsp;CPU: ${stats.cpu_percent || 0}%<br>
+      &nbsp;&nbsp;RAM: ${stats.ram_percent || 0}% (${stats.ram_used_gb || 0} GB / ${stats.ram_total_gb || 0} GB)<br>
+      &nbsp;&nbsp;Disk: ${stats.disk_percent || 0}% free (${stats.disk_free_gb || 0} GB / ${stats.disk_total_gb || 0} GB)
+    `;
+
+    resourceStatus.innerHTML = html;
+  } catch (error) {
+    resourceStatus.innerHTML = `Error: ${error.message || error}`;
+  }
+}
+
+async function exportAnalyticsReport() {
+  if (!window.pywebview || !window.pywebview.api) {
+    alert('ARAVI not available for export.');
+    return;
+  }
+
+  // Collect all data
+  const history = await window.pywebview.api.get_app_activity_history();
+  const dashboard = await window.pywebview.api.get_dashboard_activity_history ?
+    await window.pywebview.api.get_dashboard_activity_history() : [];
+  const config = await window.pywebview.api.get_config();
+
+  let csv = 'ARAVI Analytics Report\\n';
+  csv += `Generated: ${new Date().toLocaleString()}\\n\\n`;
+  csv += 'App Usage Activity:\\n';
+  csv += 'Date,App,Seconds\\n';
+
+  if (history && history.length) {
+    history.forEach(entry => {
+      csv += `${entry.date},${entry.app || 'unknown'},${entry.seconds || 0}\\n`;
+    });
+  }
+
+  csv += '\\nWebsite Limits:\\n';
+  csv += 'Domain,Limit Min,Used Min\\n';
+
+  if (config.tracked_websites && config.tracked_websites.length) {
+    config.tracked_websites.forEach(site => {
+      const usedMin = (site.used_seconds || 0) / 60;
+      csv += `${site.domain},${site.limit_minutes || 0},${usedMin.toFixed(1)}\\n`;
+    });
+  }
+
+  // Trigger download
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `ARAVI_Analytics_${new Date().toISOString().split('T')[0]}.csv`;
+  link.click();
+
+  document.getElementById('analytics-status').textContent = 'Report exported successfully!';
 }
